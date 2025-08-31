@@ -1,2 +1,6 @@
 *.swp
-
+# Local Terraform state
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
