@@ -1,0 +1,13 @@
+## AIM: Create a YAML file that checks for syntax errors in Terraform files using a linter tool.
+
+name: Terraform Lint Check
+
+on: [push]
+
+
+jobs:
+  terraform-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
