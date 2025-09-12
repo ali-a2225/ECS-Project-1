@@ -1,0 +1,52 @@
+name: Build, Test and Push to ECR
+
+on: [push]
+
+
+permissions:
+
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::246534652611:role/github.aws.oicd
+        aws-region: eu-west-2
+
+
+    # Login to ECR
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    # Build and Tag Container Image
+    - name: Build container image
+      env:
+       REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+       REPOSITORY: my-ecr-repo # name of my ECR repository
+       IMAGE_TAG: ${{ github.sha }} # unique hash for the commit that triggered the workflow
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:memos .
+    # Test the image
+    - name: Test container
+      run: |
+        docker run --rm $REGISTRY/$REPOSITORY:$IMAGE_TAG echo "mem memo memos"
+   
+    
+    - name: Push docker image to Amazon ECR
+      run: |
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker push $REGISTRY/$REPOSITORY:memos
+
+
+
+
+
+
