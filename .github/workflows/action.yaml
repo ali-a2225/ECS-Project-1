@@ -32,7 +32,6 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v2
 
 
-
     # Set environment variables for unique Docker image name
     - name: Set image variables
       env:
