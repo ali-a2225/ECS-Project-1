@@ -21,7 +21,6 @@ jobs:
         role-to-assume:  ${{ secrets.AWS_OIDC_ROLE }}
         aws-region: eu-west-2
 
-
     # Login to ECR
     - name: Login to Amazon ECR
       id: login-ecr
