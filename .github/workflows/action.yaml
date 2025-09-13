@@ -5,7 +5,7 @@ on: [push]
 env:
   REPOSITORY: my-ecr-repo
   IMAGE_TAG: ${{ github.sha }}
-  REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
 
 
 permissions:
