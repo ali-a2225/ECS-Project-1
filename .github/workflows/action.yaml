@@ -32,7 +32,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: my-ecr-repo
           IMAGE_TAG: ${{ github.sha }}
-          run: echo "Variables are set
+      run: echo "Variables are set
 
     - name: Debug variables
       run: |
@@ -54,7 +54,7 @@ jobs:
       run: |
         docker run --rm $REGISTRY/$REPOSITORY:$IMAGE_TAG echo "mem memo memos"
    
-   
+
     
     - name: Push docker image to Amazon ECR
       run: |
