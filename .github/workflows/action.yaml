@@ -36,9 +36,10 @@ jobs:
 
     - name: Debug variables
       run: |
-          echo "REGISTRY=[$REGISTRY]"
-          echo "REPOSITORY=[$REPOSITORY]"
-          echo "IMAGE_TAG=[$IMAGE_TAG]"
+          echo ${REGISTRY}
+          echo ${REPOSITORY}
+          echo ${IMAGE_TAG}
+
       env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: my-ecr-repo
