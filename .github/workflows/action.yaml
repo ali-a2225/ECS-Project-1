@@ -29,10 +29,11 @@ jobs:
     # Build and Tag Container Image
     - name: Build container image
       env:
-       REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-       REPOSITORY: my-ecr-repo # name of my ECR repository
-       IMAGE_TAG: ${{ github.sha }} # unique hash for the commit that triggered the workflow
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: my-ecr-repo # name of my ECR repository
+        IMAGE_TAG: ${{ github.sha }} # unique hash for the commit that triggered the workflow
       run: |
+        echo "Building image ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}"
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:memos .
     # Test the image
     - name: Test container
