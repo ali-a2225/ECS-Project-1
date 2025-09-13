@@ -3,9 +3,9 @@ name: Build, Test and Push to ECR
 on: [push]
 
 env:
-  REGISTRY: ${{ steps.login-ecr.outputs.registry }}
   REPOSITORY: my-ecr-repo
   IMAGE_TAG: ${{ github.sha }}
+  REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
 
 permissions:
