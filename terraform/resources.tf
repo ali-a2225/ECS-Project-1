@@ -127,8 +127,8 @@ resource "aws_launch_template" "EC2_Launch_Template" {
 
 #Auto Scaling Group
 resource "aws_autoscaling_group" "web_asg" {
-  desired_capacity     = 2
-  max_size             = 3
+  desired_capacity     = 3
+  max_size             = 4
   min_size             = 1
   vpc_zone_identifier  = aws_subnet.private[*].id
   launch_template {
@@ -157,8 +157,8 @@ resource "aws_autoscaling_group" "web_asg" {
 
 ####### ECR ##########
 #Create an ECR repository to store Docker images
-resource "aws_ecr_repository" "web_ecr_repo" {
-  name = "my-ecr-repo" # <---------------- need to import
+data "aws_ecr_repository" "web_ecr_repo" {
+  name = "my-ecr-repo" 
 }
 
 
@@ -204,14 +204,14 @@ resource "aws_ecs_task_definition" "web_task" {
   execution_role_arn = aws_iam_role.ECS_Agent_Role.arn
   network_mode     = "awsvpc"
   requires_compatibilities = ["EC2"]
-  cpu              = "256"
-  memory           = "256"
+  cpu              = 256
+  memory           = 512
 
   container_definitions = jsonencode([
     {
       name      = "first"
-      image     = "${aws_ecr_repository.web_ecr_repo.repository_url}:latest"
-      cpu       = 10
+      image     = "${data.aws_ecr_repository.web_ecr_repo.repository_url}:latest"
+      cpu       = 256
       memory    = 512
       essential = true
       portMappings = [
@@ -228,52 +228,10 @@ resource "aws_ecs_task_definition" "web_task" {
           awslogs-stream-prefix = "ecs"
         }
       }
-    },
-    {
-      name      = "second"
-      image     = "service-second"
-      cpu       = 10
-      memory    = 256
-      essential = true
-      portMappings = [
-        {
-          containerPort = 443
-          hostPort      = 443
-        }
-      ]
-      
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.ecs.name
-          awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "ecs"
-        }
-      }
-    },
-    {
-      name      = "third"
-      image     = "service-third"
-      cpu       = 10
-      memory    = 256
-      essential = true
-      portMappings = [
-        {
-          containerPort = 443
-          hostPort      = 443
-        }
-      ]
-
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.ecs.name
-          awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "ecs"
-        }
-      }
     }
-  ])
+  ]
+  )
+
 
 
 
@@ -314,7 +272,7 @@ resource "aws_ecs_service" "memo_service" {
 
 
   capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.ecs_asg_capacity_provider.name
+    capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
     weight            = 1
   }
 
@@ -339,8 +297,8 @@ resource "aws_ecs_service" "memo_service" {
 
 
 # Create a Capacity Provider for the Web Auto Scaling Group
-resource "aws_ecs_capacity_provider" "ecs_asg_capacity_provider" {
-  name = "ecs-asg-capacity-provider"
+resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
+  name = "asg-capacity-provider"
 
 
 
@@ -365,9 +323,9 @@ resource "aws_ecs_capacity_provider" "ecs_asg_capacity_provider" {
 # Attach the Capacity Provider to the ECS Cluster
 resource "aws_ecs_cluster_capacity_providers" "main" {
   cluster_name = aws_ecs_cluster.web_ecs_cluster.name
-  capacity_providers = [aws_ecs_capacity_provider.ecs_asg_capacity_provider.name]
+  capacity_providers = [aws_ecs_capacity_provider.asg_capacity_provider.name]
   default_capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.ecs_asg_capacity_provider.name
+    capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
     weight            = 100
     base              = 1
   }

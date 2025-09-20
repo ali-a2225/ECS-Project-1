@@ -63,6 +63,7 @@ resource "aws_lb_listener" "app_lb_listener" {
   protocol = "HTTPS"
   ssl_policy = "ELBSecurityPolicy-2016-08"
   #Commented out because using LocalStack
+
   certificate_arn = data.aws_acm_certificate.cert.arn
 
   default_action {

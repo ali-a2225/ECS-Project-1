@@ -1,20 +1,14 @@
-#Configure DNS with Route 53
 
 
-#
+data "aws_route53_zone" "main" {
+  name         = "aliabukar.com"
 
-resource "aws_route53_zone" "main" {
-  name = "aliabukar.com"
-
-
-  vpc {
-    vpc_id = aws_vpc.main.id
-  }
-
-  lifecycle {
-    ignore_changes = [vpc]
-  }
 }
+
+
+
+
+#Configure DNS with Route 53
 
 
 
@@ -24,7 +18,7 @@ resource "aws_route53_zone" "main" {
 
 
 resource "aws_route53_record" "dm" {
-  zone_id = aws_route53_zone.main.zone_id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = "aliabukar.com"
   type    = "A"
 
@@ -40,7 +34,7 @@ resource "aws_route53_record" "dm" {
 
 # Subdomain -> ALB
 resource "aws_route53_record" "tm_dm" {
-  zone_id = aws_route53_zone.main.zone_id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = "tm.aliabukar.com"
   type    = "A"
 

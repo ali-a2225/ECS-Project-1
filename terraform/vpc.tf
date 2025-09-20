@@ -56,7 +56,7 @@ resource "aws_subnet" "public" {
     count = 3
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.${count.index + 1}.0/24"
-    region     = "eu-west-"
+    region     = "eu-west-2"
     availability_zone = "eu-west-2${element(["a","b","c"], count.index)}"
 
   tags = {

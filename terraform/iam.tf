@@ -100,7 +100,7 @@ resource "aws_iam_instance_profile" "EC2_Instance_Profile" {
 
 # Create an IAM role for ECS Agents to use 
 resource "aws_iam_role" "ECS_Agent_Role" {
-  name = "ECS_Task_Role"
+  name = "ECS_Agent_Role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
