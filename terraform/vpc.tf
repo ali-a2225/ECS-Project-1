@@ -6,7 +6,10 @@
 # Create VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
-  description = "main vpc"
+
+  tags = {
+    Name = "main-vpc"
+  }
 }
 
 
@@ -40,8 +43,7 @@ resource "aws_nat_gateway" "NAT" {
 
   # To ensure proper ordering, it is recommended to add an explicit dependency
   # on the Internet Gateway for the VPC.
-  depends_on = [aws_internet_gateway.gw]
-  depends_on = [aws_subnet.public[*].id]
+
 }
 
 
@@ -49,29 +51,29 @@ resource "aws_nat_gateway" "NAT" {
 
 
 #Subnets
-## Create Public subnets - eu-west-1a,1b,1c
+## Create Public subnets - eu-west-2a,2b,2c
 resource "aws_subnet" "public" {
     count = 3
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.${count.index + 1}.0/24"
-    region     = "eu-west-1"
-    availability_zone = "eu-west-1${element(["a","b","c"], count.index)}"
+    region     = "eu-west-"
+    availability_zone = "eu-west-2${element(["a","b","c"], count.index)}"
 
   tags = {
-    Name = "public_subnet_euwest-1${element(["a","b","c"], count.index)}"
+    Name = "public_subnet_euwest-2${element(["a","b","c"], count.index)}"
   }
 }
 
-## Create Private subnets - eu-west-1a,1b,1c
+## Create Private subnets - eu-west-2a,b,c
 resource "aws_subnet" "private" {
     count = 3
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1${count.index + 1}.0/24"
-    region     = "eu-west-1"
-    availability_zone = "eu-west-1${element(["a","b","c"], count.index)}"
+    region     = "eu-west-2"
+    availability_zone = "eu-west-2${element(["a","b","c"], count.index)}"
 
   tags = {
-    Name = "private_subnet_euwest-1${element(["a","b","c"], count.index)}"
+    Name = "private_subnet_euwest-2${element(["a","b","c"], count.index)}"
   }
 }
 
@@ -114,7 +116,7 @@ resource "aws_route_table_association" "private" {
 
 
 # Create Public Route Table
-/*
+#/*
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -137,7 +139,7 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-*/
+#*/
 
 
 
@@ -161,7 +163,7 @@ resource "aws_security_group" "lb_sg" {
 
 
 ###Allow in HTTP from anywhere
-resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_0.0.0.0/0"{
+resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_everywhere"{
   security_group_id = aws_security_group.lb_sg.id
 
 
@@ -172,7 +174,7 @@ resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_0.0.0.0/0"{
   description = "Allow HTTP from anywhere"
 }
 ###Allow in HTTPS from anywhere
-resource "aws_vpc_security_group_ingress_rule" "sg_allow_https_from_0.0.0.0/0"{
+resource "aws_vpc_security_group_ingress_rule" "sg_allow_https_from_everywhere"{
   security_group_id = aws_security_group.lb_sg.id
 
 
@@ -214,7 +216,7 @@ resource "aws_security_group" "web_sg" {
   vpc_id      = aws_vpc.main.id
 
 }
-
+/*
 ###Allow in HTTP from anywhere
 resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_lb"{
   security_group_id = aws_security_group.web_sg.id
@@ -225,6 +227,7 @@ resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_lb"{
   description = "Allow HTTP traffic from Load Balancer"
 
 }
+*/
 
 ###Allow in HTTP, and HTTPS from anywhere
 resource "aws_vpc_security_group_ingress_rule" "sg_allow_https_from_lb"{
@@ -237,5 +240,28 @@ resource "aws_vpc_security_group_ingress_rule" "sg_allow_https_from_lb"{
 
 }
 
+
+/*
+###Allow outbound HTTP traffic from EC2 instances
+resource "aws_vpc_security_group_egress_rule" "sg_allow_HTTP_outbound_web" {
+  security_group_id = aws_security_group.web_sg.id  
+  cidr_ipv4 = "0.0.0.0/0" 
+  from_port   = 80
+  to_port     = 80
+  ip_protocol    = "tcp"
+  description = "Allow all outbound HTTP traffic from EC2 instances"
+
+}
+*/
+
+###Allow outbound HTTPS traffic from EC2 instances
+resource "aws_vpc_security_group_egress_rule" "sg_allow_HTTPS_outbound_web" {
+  security_group_id = aws_security_group.web_sg.id  
+  cidr_ipv4 = "0.0.0.0/0" 
+  from_port   = 443
+  to_port     = 443
+  ip_protocol    = "tcp"
+  description = "Allow all outbound HTTPS traffic from EC2 instances"
+}
 
 
