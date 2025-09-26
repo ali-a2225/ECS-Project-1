@@ -1,22 +1,9 @@
-
-
 data "aws_route53_zone" "main" {
   name         = "aliabukar.com"
 
 }
 
-
-
-
-#Configure DNS with Route 53
-
-
-
-
-
 #DNS name to Load Balancer Domain Name mapping
-
-
 resource "aws_route53_record" "dm" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = "aliabukar.com"
@@ -28,9 +15,6 @@ resource "aws_route53_record" "dm" {
     evaluate_target_health = true
   }
 }
-
-
-
 
 # Subdomain -> ALB
 resource "aws_route53_record" "tm_dm" {
