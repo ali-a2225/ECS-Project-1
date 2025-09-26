@@ -6,10 +6,6 @@ data "aws_ecr_repository" "web_ecr_repo" {
 }
 
 ####### ECS ##########
-#Create encryption key for encrypting session data and logs sent to CloudWatch
-resource "aws_kms_key" "simple" {
-  description = "KMS key for ECS Exec logging"
-}
 
 ##Create an ECS Cluster
 resource "aws_ecs_cluster" "web_ecs_cluster" {
@@ -21,7 +17,6 @@ resource "aws_ecs_cluster" "web_ecs_cluster" {
   configuration {
     execute_command_configuration {
       logging = "OVERRIDE"
-      kms_key_id = aws_kms_key.simple.arn
       log_configuration {
         cloud_watch_encryption_enabled = true
         cloud_watch_log_group_name = aws_cloudwatch_log_group.ecs.name
@@ -63,7 +58,8 @@ resource "aws_ecs_task_definition" "web_task" {
           awslogs-region        = "eu-west-2"
           awslogs-stream-prefix = "ecs"
         }
-      }
+      },
+      "readonlyRootFilesystem": true
     }
   ]
   )
@@ -75,11 +71,11 @@ resource "aws_ecs_task_definition" "web_task" {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in [eu-west-2a, eu-west-2b, eu-west-2c]"
   }
-
+  
   tags = {
     Name = "gatus-task"
   }
-  depends_on = [aws_iam_role_policy.ECS_Task_Role_Policy]
+  #depends_on = [aws_iam_role_policy.ECS_Task_Role_Policy]
 }
 
 # ECS Service
@@ -96,6 +92,7 @@ resource "aws_ecs_service" "gatus_service" {
   }
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
+    weight = 1
   }
 
   deployment_minimum_healthy_percent = 0
@@ -148,5 +145,6 @@ resource "aws_ecs_cluster_capacity_providers" "main" {
 #Cloudwatch log qroup for ECS tasks
 resource "aws_cloudwatch_log_group" "ecs" {
   name = "/ecs/demo"
-  retention_in_days = 14
+  retention_in_days = 365
+
 }

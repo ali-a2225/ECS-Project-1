@@ -3,8 +3,32 @@
 terraform.tfstate
 terraform.tfstate.backup
 *.tfstate
+*.tfstate.*
 *.tfstate.backup
 *.
 terraform/.terraform
 terraform/.terraform.lock.hcl
 
+
+# Local .terraform directories
+.terraform/
+
+# Crash log files
+crash.log
+crash.*.log
+
+*.tfvars
+*.tfvars.json
+
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+
+.terraform.tfstate.lock.info
+
+
+.terraformrc
+terraform.rc

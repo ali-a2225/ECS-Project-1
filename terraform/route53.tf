@@ -28,6 +28,3 @@ resource "aws_route53_record" "tm_dm" {
     evaluate_target_health = true
   }
 }
-
-
-
