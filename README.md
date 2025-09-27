@@ -38,7 +38,7 @@ This project is based on Amazon's Threat Composer Tool, an open source tool desi
 - allow traffic from ALB to ECS tasks only
 
 **Route53:**
-- a Record (alias) pointing to the ALB DNS name
+- a record (alias) pointing to the ALB DNS name
 
 **IAM**
 - Task Role provides permissions required by ECS tasks
