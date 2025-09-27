@@ -17,35 +17,35 @@ This project is based on Amazon's Threat Composer Tool, an open source tool desi
 - 3 Private routes → 3 NAT Gateway in the corresponding AZ for high availability.
 
 **Application Load Balancer (ALB)**
-    - deployed across all 3 public subnets.
-    - distributes traffic to containers registered in a Target Group.
-    - HTTPS (port 443) listener with SSL certificate.
-    - HTTP listener → HTTPS redirection for encryption.
+- deployed across all 3 public subnets.
+- distributes traffic to containers registered in a Target Group.
+- HTTPS (port 443) listener with SSL certificate.
+- HTTP listener → HTTPS redirection for encryption.
 
 **ECS Service**
-    - registers tasks' IP addresses with the ALB Target Group
-    - uses AWS VPC networking mode, creating an ENI for each container.
+- registers tasks' IP addresses with the ALB Target Group
+- uses AWS VPC networking mode, creating an ENI for each container.
 
 **Auto Scaling Group (ASG)**
-    - scales EC2 instances in or out based on demand
+- scales EC2 instances in or out based on demand
 
 **Capacity Provider**
-    - abstracts underlying EC2 resources for ECS services
-    - works with ASG
+- abstracts underlying EC2 resources for ECS services
+- works with ASG
 
 **Security Groups**
-    - allow inbound HTTPS (`443`) from `0.0.0.0/0` to the ALB
-    - allow traffic from ALB to ECS tasks only
+- allow inbound HTTPS (`443`) from `0.0.0.0/0` to the ALB
+- allow traffic from ALB to ECS tasks only
 
 **Route53:**
-    - a Record (alias) pointing to the ALB DNS name
+- a Record (alias) pointing to the ALB DNS name
 
 **IAM**
 - Task Role provides permissions required by ECS tasks
 - EC2 Role allows ECS instances to join the ECS cluster and pull images from Amazon ECR
 
 **CloudWatch**
-    - collects logs from the ECS cluster for observability and debugging.
+- collects logs from the ECS cluster for observability and debugging.
 
 
 
