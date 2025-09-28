@@ -3,7 +3,7 @@
 This project is based on Amazon's Threat Composer Tool, an open source tool designed to facilitate threat modelling and improve security assessments.  
 
 
-![image]([https://github.com/ali-a2225/ECS-Project-1/blob/43f459951b4d9c7e0af92b21a401d03021aaea07/infra-diagram%20Gatus.jpg](https://github.com/ali-a2225/ECS-Project-1/blob/654dbe283edeb4de47473534926baf925d7a41ce/infra-diagram%20Gatus.jpg))
+![image](https://github.com/ali-a2225/ECS-Project-1/blob/654dbe283edeb4de47473534926baf925d7a41ce/infra-diagram%20Gatus.jpg)
 
 ## VPC 
 
