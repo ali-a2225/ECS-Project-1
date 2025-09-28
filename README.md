@@ -11,7 +11,7 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 - DNS – Route53 A record mapping the domain to the ALB DNS name.
 
 
-![image](https://github.com/ali-a2225/ECS-Project-1/blob/654dbe283edeb4de47473534926baf925d7a41ce/infra-diagram%20Gatus.jpg)
+![images](https://github.com/ali-a2225/ECS-Project-1/blob/d125e490ec0f8c8e57a5a697869e7ea713423572/images/infra-diagram%20Gatus.jpg)
 
 ## VPC 
 
