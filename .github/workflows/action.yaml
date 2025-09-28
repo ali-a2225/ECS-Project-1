@@ -3,7 +3,7 @@ name: Build, Test and Push to ECR
 on: [push]
 
 env:
-  REPOSITORY: my-ecr-repo
+  REPOSITORY: gatus
   IMAGE_TAG: ${{ github.sha }}
 
 
@@ -36,7 +36,7 @@ jobs:
     - name: Set image variables
       env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: my-ecr-repo
+          REPOSITORY: gatus
           IMAGE_TAG: ${{ github.sha }}
       run: echo "Variables are set"
 
@@ -48,14 +48,14 @@ jobs:
 
       env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: my-ecr-repo
+          REPOSITORY: gatus
           IMAGE_TAG: ${{ github.sha }}
 
     # Build and Tag Container Image
     - name: Build container image
       env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: my-ecr-repo
+          REPOSITORY: gatus
           IMAGE_TAG: ${{ github.sha }}
       run: |
         echo "Building image" 
@@ -68,7 +68,7 @@ jobs:
         docker run --rm "${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}" echo "mem memo memos"
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: my-ecr-repo
+        REPOSITORY: gatus
         IMAGE_TAG: ${{ github.sha }}
 
    
