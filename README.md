@@ -62,3 +62,5 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 3. Run `terraform init && terraform apply`  
 4. Deploy the application via GitHub Actions  
 
+
+## Further Improvements
