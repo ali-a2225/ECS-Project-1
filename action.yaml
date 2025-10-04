@@ -1,0 +1,97 @@
+name: Build, Test and Push to ECR
+
+on:
+  push:
+    paths:
+      - 'ECS Project 1/app/**'
+      - '.github/workflows/**'
+
+
+env:
+  REPOSITORY: gatus
+  IMAGE_TAG: ${{ github.sha }}
+
+
+
+permissions:
+
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume:  ${{ secrets.AWS_OIDC_ROLE }}
+        aws-region: eu-west-2
+
+    # Login to ECR
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+
+    # Set environment variables for unique Docker image name
+    - name: Set image variables
+      env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: gatus
+          IMAGE_TAG: ${{ github.sha }}
+      run: echo "Variables are set"
+
+    - name: Debug variables
+      run: |
+          echo ${REGISTRY}
+          echo ${REPOSITORY}
+          echo ${IMAGE_TAG}
+
+      env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: gatus
+          IMAGE_TAG: ${{ github.sha }}
+
+    # Build and Tag Container Image
+    - name: Build container image
+      env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: gatus
+          IMAGE_TAG: ${{ github.sha }}
+      run: |
+        echo "Building image" 
+        echo ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:memos .
+
+    # Test the container image
+    - name: Test container
+      run: |
+        docker run --rm "${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}" echo "mem memo memos"
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: gatus
+        IMAGE_TAG: ${{ github.sha }}
+
+   
+    #Push the container image to ECR
+    - name: Push docker image to Amazon ECR
+      run: |
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker push $REGISTRY/$REPOSITORY:memos
+      env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
+
+
+
+
+
+
+
+
+
+
