@@ -1,6 +1,11 @@
 name: Build, Test and Push to ECR
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'ECS Project 1/app/**'
+      - '.github/workflows/**'
+
 
 env:
   REPOSITORY: gatus
