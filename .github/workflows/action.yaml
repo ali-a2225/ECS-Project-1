@@ -65,7 +65,7 @@ jobs:
       run: |
         echo "Building image" 
         echo ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:gatus ./app
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:gatus -f "ECS Project 1/app/dockerfile" "ECS Project 1/app"
 
     # Test the container image
     - name: Test container
