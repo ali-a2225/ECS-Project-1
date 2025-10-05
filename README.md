@@ -55,6 +55,27 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 **CloudWatch**
 - collects logs from the ECS cluster for observability and debugging.
 
+**Tree**
+```
+.
+├── README.md
+├── app
+│   ├── Dockerfile
+│   └── config
+│       └── config.yaml
+├── terraform
+│   ├── acm.tf
+│   ├── alb.tf
+│   ├── alboutput.tf
+│   ├── ecs.tf
+│   ├── iam.tf
+│   ├── provider.tf
+│   ├── resources.tf
+│   ├── route53.tf
+│   ├── secgroups.tf
+│   └── vpc.tf
+├── tf.yaml
+```
 
 ## Getting Started
 1. Clone the repo  
