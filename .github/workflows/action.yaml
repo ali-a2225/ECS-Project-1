@@ -65,12 +65,23 @@ jobs:
       run: |
         echo "Building image" 
         echo ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:gatus ./app
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest ./app
 
     # Test the container image
     - name: Test container
       run: |
-        docker run --rm "${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}" echo "gatus generated this log line"
+        echo "starting Gatus container"
+        docker run -d --rm --name gatus-test -p 8080:8080 \
+          "${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}"
+
+        echo "Waiting for Gatus to start..."
+        sleep 5
+
+        echo "Running health check..."
+        curl -f http://localhost:8080/health || (echo "❌ Healthcheck failed" && exit 1)
+
+        echo "Stopping container..."
+        docker stop gatus-test
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: gatus
