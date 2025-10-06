@@ -55,7 +55,7 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 **CloudWatch**
 - collects logs from the ECS cluster for observability and debugging.
 
-**Tree**
+## **Tree**
 ```
 .
 ├── README.md
