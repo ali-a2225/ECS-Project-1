@@ -1,4 +1,3 @@
-
 ####### ECR ##########
 #Read from an ECR repository with Docker images
 data "aws_ecr_repository" "web_ecr_repo" {
@@ -30,7 +29,7 @@ resource "aws_ecs_task_definition" "web_task" {
 
   family = "service"
   #task_role_arn   = aws_iam_role.ECS_Task_Role.arn
-  execution_role_arn = aws_iam_role.ECS_Agent_Role.arn
+  execution_role_arn = var.ECS_Agent_Role_ARN
   network_mode     = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu              = 256
@@ -86,8 +85,8 @@ resource "aws_ecs_service" "gatus_service" {
   task_definition = aws_ecs_task_definition.web_task.arn
   desired_count   = 1
   network_configuration {
-    subnets         = aws_subnet.private[*].id
-    security_groups = [aws_security_group.web_sg.id]
+    subnets         = var.private_subnets
+    security_groups = [var.web_sg_id]
     assign_public_ip = false
   }
   capacity_provider_strategy {
@@ -99,7 +98,7 @@ resource "aws_ecs_service" "gatus_service" {
   deployment_maximum_percent         = 100  
   #ECS will register and deregister tasks with this target group
   load_balancer {
-    target_group_arn = aws_lb_target_group.tg-lb-ecs.arn
+    target_group_arn = var.target_group_arn
     container_name   = "first"
     container_port   = 8080
   }
@@ -120,7 +119,7 @@ resource "aws_ecs_service" "gatus_service" {
 resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
   name = "asg-capacity-provider"
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.web_asg.arn
+    auto_scaling_group_arn         = var.web_asg_arn
     managed_scaling {
       status                    = "ENABLED"
       target_capacity           = 75
@@ -128,7 +127,7 @@ resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
       maximum_scaling_step_size = 2
     }
   }
-  depends_on = [aws_autoscaling_group.web_asg]
+  depends_on = [var.web_asg_arn]
 }
 
 # Attach the Capacity Provider to the ECS Cluster

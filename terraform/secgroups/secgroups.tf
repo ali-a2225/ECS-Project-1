@@ -6,7 +6,7 @@
 resource "aws_security_group" "lb_sg" {
   name        = "lb-sg"
   description = "Allow HTTP and HTTPS traffic"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
 }
 
@@ -50,7 +50,7 @@ resource "aws_vpc_security_group_egress_rule" "sg_allow_all_outbound" {
 resource "aws_security_group" "web_sg" {
   name        = "web-sg"
   description = "Allow HTTP and HTTPS traffic"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
 }
 

@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "tg-lb-ecs" {
   name     = "tg-lb-ecs"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
+  vpc_id   = var.vpc_id
   target_type = "ip"
   health_check {
   enabled             = true  
@@ -33,7 +33,7 @@ resource "aws_launch_template" "EC2_Launch_Template" {
   image_id  = data.aws_ssm_parameter.ecs_node_ami.value
   instance_type = "t2.micro"
   iam_instance_profile {
-    arn = aws_iam_instance_profile.EC2_Instance_Profile.arn
+    arn = var.EC2_Instance_Profile_ARN
   }
   instance_initiated_shutdown_behavior = "terminate"
   monitoring {
@@ -43,7 +43,7 @@ resource "aws_launch_template" "EC2_Launch_Template" {
     associate_public_ip_address = false
     delete_on_termination       = true
     device_index                = 0
-    security_groups             = [aws_security_group.web_sg.id]
+    security_groups             = [var.web_sg_id]
   }
 
   tag_specifications {
@@ -54,7 +54,7 @@ resource "aws_launch_template" "EC2_Launch_Template" {
   }
   user_data = base64encode(<<-EOF
       #!/bin/bash
-      echo ECS_CLUSTER=${aws_ecs_cluster.web_ecs_cluster.name} >> /etc/ecs/ecs.config;
+      echo ECS_CLUSTER=${var.web_ecs_cluster_name} >> /etc/ecs/ecs.config;
     EOF
   )
 
@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "web_asg" {
   desired_capacity     = 2
   max_size             = 3
   min_size             = 1
-  vpc_zone_identifier  = aws_subnet.private[*].id
+  vpc_zone_identifier  = var.private_subnets
   launch_template {
     id      = aws_launch_template.EC2_Launch_Template.id
     version = "$Latest"
@@ -82,5 +82,5 @@ resource "aws_autoscaling_group" "web_asg" {
     propagate_at_launch = true
 
   }
-  depends_on = [aws_iam_instance_profile.EC2_Instance_Profile]
+  depends_on = [var.EC2_Instance_Profile_ARN]
 }

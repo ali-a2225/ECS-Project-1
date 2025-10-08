@@ -10,8 +10,8 @@ resource "aws_route53_record" "dm" {
   type    = "A"
 
   alias {
-    name                   = aws_lb.app_lb.dns_name
-    zone_id                = aws_lb.app_lb.zone_id
+    name                   = var.alb_url
+    zone_id                = var.alb_zone_id
     evaluate_target_health = true
   }
 }
@@ -23,8 +23,8 @@ resource "aws_route53_record" "tm_dm" {
   type    = "A"
 
   alias {
-    name                   = aws_lb.app_lb.dns_name
-    zone_id                = aws_lb.app_lb.zone_id
+    name                   = var.alb_url
+    zone_id                = var.alb_zone_id
     evaluate_target_health = true
   }
 }
