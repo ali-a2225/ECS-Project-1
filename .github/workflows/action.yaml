@@ -3,7 +3,7 @@ name: Build, Test and Push to ECR
 on:
   push:
     paths:
-      - 'ECS Project 1/app/**'
+      - '/app/**'
       - '.github/workflows/**'
 
 
@@ -74,11 +74,11 @@ jobs:
         docker run -d --rm --name gatus-test -p 8080:8080 \
           "${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}"
 
-        echo "Waiting for Gatus to start..."
+        echo "Waiting for Gatus to start."
         sleep 5
 
-        echo "Running health check..."
-        curl -f http://localhost:8080/health || (echo "❌ Healthcheck failed" && exit 1)
+        echo "Running health check."
+        curl -f http://localhost:8080/health || (echo "Healthcheck failed" && exit 1)
 
         echo "Stopping container..."
         docker stop gatus-test
