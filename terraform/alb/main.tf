@@ -7,14 +7,38 @@ resource "aws_lb" "app_lb" {
   subnets            = var.public_subnets
   security_groups    = var.load_balancer_security_group
   drop_invalid_header_fields = true
-  enable_deletion_protection = true
+  #enable_deletion_protection = true
   depends_on = [var.internet_gateway_id]
   tags = {
     Name = "app-lb"
   }
 }
 
-#2. Listener
+#Create Target Group for Load Balancer
+resource "aws_lb_target_group" "tg-lb-ecs" {
+  name     = "tg-lb-ecs"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
+  target_type = "ip"
+  health_check {
+  enabled             = true  
+  path                = "/"
+  port                = "traffic-port"
+  protocol = "HTTP"
+  matcher             = 200
+  interval            = 300
+  timeout             = 120
+  healthy_threshold   = 4
+  unhealthy_threshold = 3
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+#3. Listener
 
 # Listener for HTTPS
 resource "aws_lb_listener" "app_lb_listener" {
