@@ -1,27 +1,3 @@
-#Create Target Group for Load Balancer
-resource "aws_lb_target_group" "tg-lb-ecs" {
-  name     = "tg-lb-ecs"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
-  target_type = "ip"
-  health_check {
-  enabled             = true  
-  path                = "/"
-  port                = "traffic-port"
-  protocol = "HTTP"
-  matcher             = 200
-  interval            = 300
-  timeout             = 120
-  healthy_threshold   = 4
-  unhealthy_threshold = 3
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 data "aws_ssm_parameter" "ecs_node_ami" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
