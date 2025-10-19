@@ -25,7 +25,8 @@ module "ecs"{
     private_subnets = module.vpc.private_subnet_ids
     target_group_arn = module.resources.target_group_arn
     web_sg_id = module.secgroups.web_sg_id
-
+    containerPort = var.containerPort
+    hostPort = var.hostPort
 }
 
 module "resources" {
@@ -42,6 +43,7 @@ module "secgroups" {
     source = "./secgroups"
 
     vpc_id = module.vpc.vpc_id
+    containerPort = var.containerPort
 
 }
 
