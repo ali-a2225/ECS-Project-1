@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "web_task" {
       portMappings = [
         {
 
-          containerPort = 8080
+          containerPort = var.containerPort
           hostPort      = 8080
           protocol = "TCP"
         }
@@ -100,7 +100,7 @@ resource "aws_ecs_service" "gatus_service" {
   load_balancer {
     target_group_arn = var.target_group_arn
     container_name   = "first"
-    container_port   = 8080
+    container_port   = var.containerPort
   }
   ordered_placement_strategy {
     type  = "binpack"

@@ -5,3 +5,9 @@ variable "private_subnets" {
 }
 variable "target_group_arn" {}
 variable "web_sg_id" {}
+variable "containerPort" {
+  type = number
+}
+variable "hostPort" {
+  type = number
+}
