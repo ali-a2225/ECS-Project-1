@@ -49,7 +49,7 @@ resource "aws_vpc_security_group_egress_rule" "sg_allow_all_outbound" {
 ###EC2 instances Security Group
 resource "aws_security_group" "web_sg" {
   name        = "web-sg"
-  description = "Allow HTTP and HTTPS traffic"
+  description = "EC2 instances and ECS Tasks SG allowing only port 8080 from ALB"
   vpc_id      = var.vpc_id
 
 }
