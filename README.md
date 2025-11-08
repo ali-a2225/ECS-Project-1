@@ -63,18 +63,38 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 │   ├── Dockerfile
 │   └── config
 │       └── config.yaml
-├── terraform
+├── acm
 │   ├── acm.tf
-│   ├── alb.tf
-│   ├── alboutput.tf
+│   └── outputs.tf
+├── alb
+│   ├── main.tf
+│   ├── output.tf
+│   └── variables.tf
+├── ecs
 │   ├── ecs.tf
+│   ├── outputs.tf
+│   └── variables.tf
+├── iam
 │   ├── iam.tf
-│   ├── provider.tf
+│   └── outputs.tf
+├── resources
+│   ├── outputs.tf
 │   ├── resources.tf
+│   └── variables.tf
+├── route53
 │   ├── route53.tf
+│   └── variables.tf
+├── secgroups
+│   ├── outputs.tf
 │   ├── secgroups.tf
+│   └── variables.tf
+└── vpc
+│   ├── outputs.tf
 │   └── vpc.tf
-├── tf.yaml
+├── main.tf
+├── provider.tf
+└── variables.tf
+
 ```
 
 ## Getting Started
