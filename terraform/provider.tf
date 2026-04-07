@@ -6,6 +6,8 @@ terraform {
       bucket = "terraform-state-aws-ali"
       key    = "terraform.tfstate"
       region = "eu-west-2"
+      use_lockfile = true
+      encrypt = true
     }
 }
 provider "aws" { region = "eu-west-2"}
