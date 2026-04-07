@@ -35,8 +35,8 @@ jobs:
         cache: true
     
     - name: terraform fmt
-        uses: dflook/terraform-fmt@v2
-        with:
+      uses: dflook/terraform-fmt@v2
+      with:
           path: terraform
 
     - name: Create Pull Request
@@ -50,7 +50,7 @@ jobs:
 
     - name: Terraform security scan (tfsec)
       uses: triat/terraform-security-scan@v3.0.0
-       with:
+      with:
         path: terraform          
         scanners: tfsec    
       env:
