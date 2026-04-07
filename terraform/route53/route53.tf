@@ -1,12 +1,11 @@
-data "aws_route53_zone" "main" {
-  name         = "aliabukar.com"
-
+resource "aws_route53_zone" "main" {
+  name         = var.domain_name
 }
 
 #DNS name to Load Balancer Domain Name mapping
 resource "aws_route53_record" "dm" {
-  zone_id = data.aws_route53_zone.main.zone_id
-  name    = "aliabukar.com"
+  zone_id = aws_route53_zone.main.zone_id
+  name    = var.domain_name
   type    = "A"
 
   alias {
@@ -18,8 +17,8 @@ resource "aws_route53_record" "dm" {
 
 # Subdomain -> ALB
 resource "aws_route53_record" "tm_dm" {
-  zone_id = data.aws_route53_zone.main.zone_id
-  name    = "tm.aliabukar.com"
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "tm.${var.domain_name}"
   type    = "A"
 
   alias {
