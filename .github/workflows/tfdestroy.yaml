@@ -1,0 +1,42 @@
+name: Terraform Destroy
+
+# Allow manual trigger
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_destroy:
+        description: 'If you want to destroy the terraform environment, please type "DESTROY TF". Please not this will destroy all of the AWS resources'
+        required: true
+        default: main
+
+jobs:
+  destroy:
+    if: ${{ github.event.inputs.terraform_destroy == 'DESTROY TF' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume:  ${{  secrets.AWS_OIDC_ROLE }}
+        aws-region: eu-west-2
+
+    # plan before destroy
+    - name: Terraform plan before destroy
+      uses: dflook/terraform-plan@v2
+      id: plan
+      with:
+       path: terraform
+      # workspace: main
+       destroy: true
+
+    # Destroy Terraform resources
+    - name: Terraform destroy
+      uses: dflook/terraform-apply@v2
+      with:
+        path: terraform
+        # workspace: main
+        plan_path: ${{ steps.plan.outputs.plan_path}}
+        continue-on-error: false
