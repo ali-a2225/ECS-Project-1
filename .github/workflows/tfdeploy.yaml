@@ -47,6 +47,7 @@ jobs:
           title: Reformat terraform files
           body: Update Terraform files to canonical format using `terraform fmt`
           branch: automated-terraform-fmt
+      continue-on-error: true
 
 
     - name: Terraform security scan (tfsec)
