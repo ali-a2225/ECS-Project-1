@@ -5,6 +5,10 @@ on:
       - '/terraform/**'
       - '.github/workflows/tf*.yaml'
 
+permissions:
+  id-token: write
+  contents: read
+
 
 jobs:
   build:
