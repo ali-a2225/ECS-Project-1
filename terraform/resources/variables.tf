@@ -5,3 +5,4 @@ variable "web_ecs_cluster_name" {}
 variable "private_subnets" {
   type = list(string)
 }
+variable "target_group_arn" {}
