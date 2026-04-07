@@ -10,7 +10,7 @@ module "alb" {
   vpc_id = module.vpc.vpc_id
   internet_gateway_id = module.vpc.internet_gateway_id
   cert_arn = module.acm.cert_arn
-  target_group_arn = module.resources.target_group_arn
+  target_group_arn = module.alb.target_group_arn
 }
 
 module "iam" {
@@ -19,32 +19,32 @@ module "iam" {
 
 module "ecs"{
     source = "./ecs"
-
+    vpc_id = module.vpc.vpc_id
     ECS_Agent_Role_ARN = module.iam.ECS_Agent_Role_ARN
     web_asg_arn = module.resources.web_asg_arn
     private_subnets = module.vpc.private_subnet_ids
-    target_group_arn = module.resources.target_group_arn
+    target_group_arn = module.alb.target_group_arn
     web_sg_id = module.secgroups.web_sg_id
-    containerPort = var.containerPort
     hostPort = var.hostPort
+    web_ecs_cluster = var.web_ecs_cluster
+    containerPort = var.containerPort
+    app_name = var.app_name
 }
 
 module "resources" {
     source = "./resources"
-
     vpc_id = module.vpc.vpc_id
     web_sg_id = module.secgroups.web_sg_id
     EC2_Instance_Profile_ARN = module.iam.EC2_Instance_Profile_ARN
     web_ecs_cluster_name = module.ecs.web_ecs_cluster_name
     private_subnets = module.vpc.private_subnet_ids
+    target_group_arn = module.alb.target_group_arn
 }
 
 module "secgroups" {
     source = "./secgroups"
-
     vpc_id = module.vpc.vpc_id
     containerPort = var.containerPort
-
 }
 
 module "acm"{
