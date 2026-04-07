@@ -1,14 +1,14 @@
 ####### ECR ##########
 #Read from an ECR repository with Docker images
 data "aws_ecr_repository" "web_ecr_repo" {
-  name = "gatus" 
+  name = "gatus"
 }
 
 ####### ECS ##########
 
 ##Create an ECS Cluster
 resource "aws_ecs_cluster" "web_ecs_cluster" {
-  name = "gatus"
+  name = var.app_name
   setting {
     name  = "containerInsights"
     value = "enabled"
@@ -18,7 +18,7 @@ resource "aws_ecs_cluster" "web_ecs_cluster" {
       logging = "OVERRIDE"
       log_configuration {
         cloud_watch_encryption_enabled = true
-        cloud_watch_log_group_name = aws_cloudwatch_log_group.ecs.name
+        cloud_watch_log_group_name     = aws_cloudwatch_log_group.ecs.name
       }
     }
   }
@@ -29,11 +29,11 @@ resource "aws_ecs_task_definition" "web_task" {
 
   family = "service"
   #task_role_arn   = aws_iam_role.ECS_Task_Role.arn
-  execution_role_arn = var.ECS_Agent_Role_ARN
-  network_mode     = "awsvpc"
+  execution_role_arn       = var.ECS_Agent_Role_ARN
+  network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
-  cpu              = 256
-  memory           = 512
+  cpu                      = 256
+  memory                   = 512
 
   container_definitions = jsonencode([
     {
@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "web_task" {
 
           containerPort = var.containerPort
           hostPort      = 8080
-          protocol = "TCP"
+          protocol      = "TCP"
         }
       ]
       logConfiguration = {
@@ -58,9 +58,9 @@ resource "aws_ecs_task_definition" "web_task" {
           awslogs-stream-prefix = "ecs"
         }
       },
-      "readonlyRootFilesystem": true
+      "readonlyRootFilesystem" : true
     }
-  ]
+    ]
   )
   volume {
     name      = "service-storage"
@@ -70,7 +70,7 @@ resource "aws_ecs_task_definition" "web_task" {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in [eu-west-2a, eu-west-2b, eu-west-2c]"
   }
-  
+
   tags = {
     Name = "gatus-task"
   }
@@ -79,23 +79,23 @@ resource "aws_ecs_task_definition" "web_task" {
 
 # ECS Service
 resource "aws_ecs_service" "gatus_service" {
-  name            = "gatus-service"
+  name = "gatus-service"
 
   cluster         = aws_ecs_cluster.web_ecs_cluster.id
   task_definition = aws_ecs_task_definition.web_task.arn
   desired_count   = 1
   network_configuration {
-    subnets         = var.private_subnets
-    security_groups = [var.web_sg_id]
+    subnets          = var.private_subnets
+    security_groups  = [var.web_sg_id]
     assign_public_ip = false
   }
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
-    weight = 1
+    weight            = 1
   }
 
   deployment_minimum_healthy_percent = 0
-  deployment_maximum_percent         = 100  
+  deployment_maximum_percent         = 100
   #ECS will register and deregister tasks with this target group
   load_balancer {
     target_group_arn = var.target_group_arn
@@ -109,17 +109,17 @@ resource "aws_ecs_service" "gatus_service" {
   lifecycle {
     create_before_destroy = true
   }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "aws ecs update-service --cluster ${self.cluster} --service ${self.name} --desired-count 0"
-  }
+  # provisioner "local-exec" {
+  #   when    = destroy
+  #   command = "aws ecs update-service --cluster ${self.cluster} --service ${self.name} --desired-count 0"
+  # }
 }
 
 # Create a Capacity Provider for the Web Auto Scaling Group
 resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
   name = "asg-capacity-provider"
   auto_scaling_group_provider {
-    auto_scaling_group_arn         = var.web_asg_arn
+    auto_scaling_group_arn = var.web_asg_arn
     managed_scaling {
       status                    = "ENABLED"
       target_capacity           = 75
@@ -132,7 +132,7 @@ resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
 
 # Attach the Capacity Provider to the ECS Cluster
 resource "aws_ecs_cluster_capacity_providers" "main" {
-  cluster_name = aws_ecs_cluster.web_ecs_cluster.name
+  cluster_name       = aws_ecs_cluster.web_ecs_cluster.name
   capacity_providers = [aws_ecs_capacity_provider.asg_capacity_provider.name]
   default_capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
