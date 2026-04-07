@@ -7,6 +7,7 @@ variable "private_subnets" {
 variable "target_group_arn" {}
 variable "web_sg_id" {}
 variable "containerPort" {
+  default = 8080
   type = number
 }
 variable "hostPort" {
