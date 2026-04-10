@@ -7,7 +7,7 @@ resource "aws_launch_template" "EC2_Launch_Template" {
 
   name = "EC2_Resources_ECS_Cluster"
   image_id  = data.aws_ssm_parameter.ecs_node_ami.value
-  instance_type = "t3.nano"
+  instance_type = "t2.nano"
   iam_instance_profile {
     arn = var.EC2_Instance_Profile_ARN
   }
