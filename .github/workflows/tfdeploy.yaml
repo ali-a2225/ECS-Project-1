@@ -3,7 +3,7 @@ on:
   push:
     # branches: [main]
     paths:
-      - '/terraform/**'
+      - 'terraform/**'
       - '.github/workflows/tf*.yaml'
 
 permissions:
