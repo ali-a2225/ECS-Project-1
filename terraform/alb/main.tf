@@ -21,6 +21,7 @@ resource "aws_lb_target_group" "tg-lb-ecs" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
   target_type = "ip"
+  deregistration_delay = 30 
   health_check {
   enabled             = true  
   path                = "/"
@@ -50,8 +51,7 @@ resource "aws_lb_listener" "app_lb_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = var.target_group_arn
-
+    target_group_arn = aws_lb_target_group.tg-lb-ecs.arn
 }   
 
 }
