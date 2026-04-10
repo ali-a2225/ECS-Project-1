@@ -1,10 +1,10 @@
 name: Terraform Init, Plan and Apply
 on:
   push:
-    branches: [main]
-    # paths:
-    #   - '/terraform/**'
-    #   - '.github/workflows/tf*.yaml'
+    # branches: [main]
+    paths:
+      - '/terraform/**'
+      - '.github/workflows/tf*.yaml'
 
 permissions:
   id-token: write
