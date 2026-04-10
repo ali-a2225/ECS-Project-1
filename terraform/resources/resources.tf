@@ -7,7 +7,7 @@ resource "aws_launch_template" "EC2_Launch_Template" {
 
   name = "EC2_Resources_ECS_Cluster"
   image_id  = data.aws_ssm_parameter.ecs_node_ami.value
-  instance_type = "t2.micro"
+  instance_type = "t3.nano"
   iam_instance_profile {
     arn = var.EC2_Instance_Profile_ARN
   }
@@ -38,8 +38,8 @@ resource "aws_launch_template" "EC2_Launch_Template" {
 
 #Auto Scaling Group
 resource "aws_autoscaling_group" "web_asg" {
-  desired_capacity     = 2
-  max_size             = 3
+  desired_capacity     = 1
+  max_size             = 1
   min_size             = 1
   vpc_zone_identifier  = var.private_subnets
   launch_template {
