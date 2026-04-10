@@ -10,3 +10,13 @@ variable "domain_validation_options" {
         resource_record_value = string
     }))
 }
+variable "GODADDY_API_KEY" {
+  description = "GoDaddy API Key"
+  type        = string
+  sensitive   = true
+}
+variable "GODADDY_API_SECRET" {
+  description = "GoDaddy API Secret"
+  type        = string
+  sensitive   = true
+}

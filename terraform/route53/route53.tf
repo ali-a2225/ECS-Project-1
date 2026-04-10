@@ -25,6 +25,27 @@ resource "aws_route53_record" "cert_validation" {
   }
 }
 
+# Create DNS records in GoDaddy
+
+resource "null_resource" "godaddy_dns" {
+  provisioner "local-exec" {
+    command = <<EOT
+    curl -X PATCH \
+  "https://api.godaddy.com/api/v1/domains/${var.domain_name}" \
+  -H "Authorization: sso-key ${var.GODADDY_API_KEY }:${var.GODADDY_API_SECRET}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nameServers": [
+      "${data.aws_route53_zone.main.name_servers[0]}",
+      "${data.aws_route53_zone.main.name_servers[1]}"
+    ]
+  }'
+    EOT
+  }
+}
+
+
+
 #DNS name to Load Balancer Domain Name mapping
 resource "aws_route53_record" "dm" {
   zone_id = data.aws_route53_zone.main.zone_id
