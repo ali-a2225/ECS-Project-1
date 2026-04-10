@@ -35,7 +35,6 @@ jobs:
        path: terraform
       # workspace: main
        destroy: true
-       auto_approve: true
 
     # Destroy Terraform resources
     - name: Terraform destroy
@@ -45,3 +44,4 @@ jobs:
         # workspace: main
         plan_path: ${{ steps.plan.outputs.plan_path}}
         continue-on-error: false
+        auto_approve: true
