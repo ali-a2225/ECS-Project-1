@@ -61,10 +61,10 @@ jobs:
     #   continue-on-error: true
 
 
-    - name: terraform plan
-      uses: dflook/terraform-plan@v2
-      with:
-          path: terraform
+    # - name: terraform plan
+    #   uses: dflook/terraform-plan@v2
+    #   with:
+    #       path: terraform
     
     - name: terraform apply
       env:
