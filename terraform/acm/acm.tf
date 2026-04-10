@@ -12,18 +12,15 @@ resource "aws_acm_certificate" "cert" {
   }
 }
 
+# Forces tf to wait until ACM certificate is validated
 resource "aws_acm_certificate_validation" "cert_validation" {
   certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.dm : record.fqdn]
+  # collects all validation records created
+  validation_record_fqdns =  var.cert_validation
+  depends_on = [var.cert_validation]
 }
 
-resource "aws_acm_certificate_validation" "main" {
-  certificate_arn = aws_acm_certificate.cert.arn
 
-  validation_record_fqdns = [
-    for record in aws_route53_record.cert_validation : record.fqdn
-  ]
-}
 
 # output "cert_arn" {
 #   value = data.aws_acm_certificate.cert.arn
