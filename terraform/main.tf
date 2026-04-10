@@ -10,7 +10,7 @@ module "alb" {
   vpc_id = module.vpc.vpc_id
   internet_gateway_id = module.vpc.internet_gateway_id
   cert_arn = module.acm.cert_arn
-  target_group_arn = module.alb.target_group_arn
+
 }
 
 module "iam" {
@@ -29,6 +29,11 @@ module "ecs"{
     web_ecs_cluster = var.web_ecs_cluster
     containerPort = var.containerPort
     app_name = var.app_name
+
+    depends_on = [
+        module.iam
+    ]
+
 }
 
 module "resources" {
@@ -49,13 +54,17 @@ module "secgroups" {
 
 module "acm"{
     source = "./acm"
+    domain_name = var.domain_name
+    route53_record_name = module.route53.route53_record_name
+    cert_validation = module.route53.cert_validation
 }
 
 module "route53" {
     source = "./route53"
-
+    domain_name = var.domain_name
     alb_zone_id = module.alb.alb_zone_id
     alb_url = module.alb.alb_url
-
+    cert_arn = module.acm.cert_arn
+    domain_validation_options = module.acm.domain_validation_options
 }
 
