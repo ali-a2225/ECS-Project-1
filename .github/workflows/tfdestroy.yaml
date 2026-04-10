@@ -35,6 +35,7 @@ jobs:
        path: terraform
       # workspace: main
        destroy: true
+       auto_approve: true
 
     # Destroy Terraform resources
     - name: Terraform destroy
