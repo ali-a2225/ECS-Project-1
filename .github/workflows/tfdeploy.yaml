@@ -1,6 +1,7 @@
 name: Terraform Init, Plan and Apply
 on:
   push:
+    branches: [main]
     # paths:
     #   - '/terraform/**'
     #   - '.github/workflows/tf*.yaml'
@@ -61,10 +62,10 @@ jobs:
     #   continue-on-error: true
 
 
-    # - name: terraform plan
-    #   uses: dflook/terraform-plan@v2
-    #   with:
-    #       path: terraform
+    - name: terraform plan
+      uses: dflook/terraform-plan@v2
+      with:
+          path: terraform
     
     - name: terraform apply
       env:
