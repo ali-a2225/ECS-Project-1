@@ -58,5 +58,7 @@ resource "aws_autoscaling_group" "web_asg" {
     propagate_at_launch = true
 
   }
+  # stop erroirring when scaling activies fail due to capacity issues, we want to ignore those failures and not let it affect our deployment
+  ignore_failed_scaling_activities = true
   depends_on = [var.EC2_Instance_Profile_ARN]
 }
