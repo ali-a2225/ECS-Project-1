@@ -70,7 +70,7 @@ jobs:
       env:
           TF_VAR_GODADDY_API_KEY: ${{ secrets.GODADDY_API_KEY }}
           TF_VAR_GODADDY_API_SECRET: ${{ secrets.GODADDY_API_SECRET }}
-      uses: dflook/terraform-apply@v2
+      uses: dflook/terraform-apply@v2.2.3
       with:
         path: terraform
         auto-approve: true
