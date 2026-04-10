@@ -42,14 +42,14 @@ jobs:
       with:
           path: terraform
 
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-          commit-message: terraform fmt
-          title: Reformat terraform files
-          body: Update Terraform files to canonical format using `terraform fmt`
-          branch: automated-terraform-fmt
-      continue-on-error: true
+    # - name: Create Pull Request
+    #   uses: peter-evans/create-pull-request@v5
+    #   with:
+    #       commit-message: terraform fmt
+    #       title: Reformat terraform files
+    #       body: Update Terraform files to canonical format using `terraform fmt`
+    #       branch: automated-terraform-fmt
+    #   continue-on-error: true
 
 
     # - name: Terraform security scan (tfsec)
