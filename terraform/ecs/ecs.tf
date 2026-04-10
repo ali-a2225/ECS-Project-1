@@ -1,7 +1,7 @@
 ####### ECR ##########
 #Read from an ECR repository with Docker images
 data "aws_ecr_repository" "web_ecr_repo" {
-  name = "gatus"
+  name = var.app_name
 }
 
 ####### ECS ##########
@@ -72,14 +72,14 @@ resource "aws_ecs_task_definition" "web_task" {
   }
 
   tags = {
-    Name = "gatus-task"
+    Name = "${var.app_name}-task"
   }
   #depends_on = [aws_iam_role_policy.ECS_Task_Role_Policy]
 }
 
 # ECS Service
 resource "aws_ecs_service" "gatus_service" {
-  name = "gatus-service"
+  name = "${var.app_name}-service"
 
   cluster         = aws_ecs_cluster.web_ecs_cluster.id
   task_definition = aws_ecs_task_definition.web_task.arn
