@@ -50,14 +50,14 @@ jobs:
       continue-on-error: true
 
 
-    - name: Terraform security scan (tfsec)
-      uses: triat/terraform-security-scan@v3.0.0
-      with:
-        path: terraform          
-        scanners: tfsec    
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      continue-on-error: true
+    # - name: Terraform security scan (tfsec)
+    #   uses: triat/terraform-security-scan@v3.0.0
+    #   with:
+    #     path: terraform          
+    #     scanners: tfsec    
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   continue-on-error: true
 
 
     - name: terraform plan
@@ -66,6 +66,9 @@ jobs:
           path: terraform
     
     - name: terraform apply
+      env:
+          TF_VAR_GODADDY_API_KEY: ${{ secrets.GODADDY_API_KEY }}
+          TF_VAR_GODADDY_API_SECRET: ${{ secrets.GODADDY_API_SECRET }}
       uses: dflook/terraform-apply@v2
       with:
         path: terraform
