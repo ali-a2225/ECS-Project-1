@@ -66,5 +66,7 @@ module "route53" {
     alb_url = module.alb.alb_url
     cert_arn = module.acm.cert_arn
     domain_validation_options = module.acm.domain_validation_options
+    GODADDY_API_KEY = var.GODADDY_API_KEY
+    GODADDY_API_SECRET = var.GODADDY_API_SECRET
 }
 
