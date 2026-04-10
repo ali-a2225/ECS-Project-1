@@ -119,6 +119,8 @@ resource "aws_ecs_service" "gatus_service" {
 resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
   name = "asg-capacity-provider"
   auto_scaling_group_provider {
+    # disable graceful draining
+    managed_draining = "DISABLED"
     auto_scaling_group_arn = var.web_asg_arn
     managed_scaling {
       status                    = "ENABLED"
