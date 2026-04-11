@@ -8,7 +8,7 @@ data "aws_ecr_repository" "web_ecr_repo" {
 
 ##Create an ECS Cluster
 resource "aws_ecs_cluster" "web_ecs_cluster" {
-  name = var.app_name
+  name = var.web_ecs_cluster
   setting {
     name  = "containerInsights"
     value = "enabled"
@@ -126,7 +126,7 @@ resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
       status                    = "ENABLED"
       target_capacity           = 75
       minimum_scaling_step_size = 1
-      maximum_scaling_step_size = 2
+      maximum_scaling_step_size = 1
     }
   }
   depends_on = [var.web_asg_arn]
