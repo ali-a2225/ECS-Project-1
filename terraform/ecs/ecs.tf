@@ -106,9 +106,9 @@ resource "aws_ecs_service" "gatus_service" {
     type  = "binpack"
     field = "memory"
   }
-  lifecycle {
-    create_before_destroy = true
-  }
+  # lifecycle {
+  #   create_before_destroy = true
+  # }
   # provisioner "local-exec" {
   #   when    = destroy
   #   command = "aws ecs update-service --cluster ${self.cluster} --service ${self.name} --desired-count 0"
