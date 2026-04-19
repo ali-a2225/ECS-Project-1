@@ -28,7 +28,7 @@ jobs:
         aws-region: eu-west-2
 
     # plan before destroy
-    - name: Terraform plan before destroy
+    - name: terraform plan -destroy
       uses: dflook/terraform-plan@v2
       id: plan
       with:
@@ -37,7 +37,7 @@ jobs:
        destroy: true
 
     # Destroy Terraform resources
-    - name: Terraform destroy
+    - name: terraform destroy
       uses: dflook/terraform-apply@v2
       with:
         path: terraform
