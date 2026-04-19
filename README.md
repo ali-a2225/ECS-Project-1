@@ -116,4 +116,4 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 - [ ] store config.yaml in S3 bucket and pass it to the tasks at runtime rather than in the container image
 - [ ] enable tagging of resources
 - [ ] move all the terraform folder in folder terraform/modules and move bootstrap into terraform/bootstrap
-- [ ] experiment with FinOps see what other decisions to cut cost I can make
+- [ ] experiment with FinOps. See what other decisions I can make to cut costs
