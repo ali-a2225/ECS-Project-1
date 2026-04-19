@@ -16,3 +16,7 @@ variable "GODADDY_API_SECRET" {
   sensitive   = true
   default = ""
 }
+variable "region" {
+  description = "AWS Region"
+  type        = string
+}
