@@ -5,6 +5,7 @@
 
 resource "aws_acm_certificate" "cert" {
   domain_name       = var.domain_name
+  # prove I own the domain by creating a DNS record in Route53
   validation_method = "DNS"
 
   lifecycle {
