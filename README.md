@@ -106,4 +106,11 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 
 ## Further Improvements
 
-- state versioning
+-[X] state versioning
+-[ ] create scripts to perform checks for ECS and other resources
+-[ ] create own provider and module to work with GoDaddy
+-[ ] create action to list all resources currently in use on AWS
+-[ ] create script to watch ECS service live as tasks are being created and when being destroyed, it would be useful for troubleshooting.
+-[ ] create VPC endpoints to lower the costs of NAT gateways
+-[ ] consider decreasing the number of AZs
+-[ ] store config.yaml in S3 bucket and pass it to the tasks at runtime rather than in the container image
