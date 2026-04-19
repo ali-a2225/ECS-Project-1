@@ -42,11 +42,12 @@ resource "aws_ecs_task_definition" "web_task" {
       cpu       = 256
       memory    = 512
       essential = true
+      stopTimeout = 5
       portMappings = [
         {
 
           containerPort = var.containerPort
-          hostPort      = 8080
+          hostPort      = var.hostPort
           protocol      = "TCP"
         }
       ]
@@ -58,7 +59,8 @@ resource "aws_ecs_task_definition" "web_task" {
           awslogs-stream-prefix = "ecs"
         }
       },
-      "readonlyRootFilesystem" : true
+      # false for nginx
+      "readonlyRootFilesystem" : false
     }
     ]
   )
@@ -93,7 +95,8 @@ resource "aws_ecs_service" "gatus_service" {
     capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
     weight            = 1
   }
-
+  force_delete = true
+  force_new_deployment = true
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
   #ECS will register and deregister tasks with this target group
@@ -106,13 +109,23 @@ resource "aws_ecs_service" "gatus_service" {
     type  = "binpack"
     field = "memory"
   }
-  # lifecycle {
-  #   create_before_destroy = true
-  # }
-  # provisioner "local-exec" {
-  #   when    = destroy
-  #   command = "aws ecs update-service --cluster ${self.cluster} --service ${self.name} --desired-count 0"
-  # }
+  timeouts {
+    delete = "5m"
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+  #v3
+  provisioner "local-exec" {
+    when = destroy
+    ## Obtains region dynamically then scales tasks to zero before destroying
+    command = <<EOF
+    echo "Update service desired count to 0 before destroy."
+    REGION=${split(":", self.cluster)[3]}
+    aws ecs update-service --region $REGION --cluster ${self.cluster} --service ${self.name} --desired-count 0 --force-new-deployment
+    echo "Update service command executed successfully."
+    EOF
+  }
 }
 
 # Create a Capacity Provider for the Web Auto Scaling Group
@@ -120,7 +133,7 @@ resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
   name = "asg-capacity-provider"
   auto_scaling_group_provider {
     # disable graceful draining
-    managed_draining = "DISABLED"
+    managed_draining = "ENABLED"
     auto_scaling_group_arn = var.web_asg_arn
     managed_scaling {
       status                    = "ENABLED"
