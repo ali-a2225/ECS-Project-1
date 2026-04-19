@@ -29,7 +29,7 @@ module "ecs"{
     web_ecs_cluster = var.web_ecs_cluster
     containerPort = var.containerPort
     app_name = var.app_name
-
+    region = var.region
     depends_on = [
         module.iam
     ]
@@ -69,4 +69,3 @@ module "route53" {
     GODADDY_API_KEY = var.GODADDY_API_KEY
     GODADDY_API_SECRET = var.GODADDY_API_SECRET
 }
-
