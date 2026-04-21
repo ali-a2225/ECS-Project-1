@@ -1,0 +1,17 @@
+Dockerfile*
+.github
+.idea
+.git
+web/app
+*.db
+testdata
+# Environment variable files
+.env
+.env.local
+# Temp and Backup files
+*.tmp
+*~
+# OS specific files
+.DS_Store
+Thumbs.db
+.dockerignore
