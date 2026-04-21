@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '/app/**'
+      - '/app/config.yaml'
       - '.github/workflows/**'
 
 
