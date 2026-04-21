@@ -8,10 +8,6 @@ on:
       - '.github/workflows/**'
 
 
-env:
-  REPOSITORY: gatus
-  IMAGE_TAG: ${{ github.sha }}
-
 
 
 permissions:
@@ -39,34 +35,24 @@ jobs:
 
 
     # Set environment variables for unique Docker image name
-    - name: Set image variables
-      env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: gatus
-          IMAGE_TAG: ${{ github.sha }}
-      run: echo "Variables are set"
-
-    - name: Debug variables
+    - name: Set environment variables
       run: |
-          echo ${REGISTRY}
-          echo ${REPOSITORY}
-          echo ${IMAGE_TAG}
-
-      env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: gatus
-          IMAGE_TAG: ${{ github.sha }}
+        echo "REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
+        echo "REPOSITORY=gatus" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
 
     # Build and Tag Container Image
-    - name: Build container image
-      env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: gatus
-          IMAGE_TAG: ${{ github.sha }}
-      run: |
-        echo "Building image" 
-        echo ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest ./app
+    - name: Build container image (cache enabled)
+      uses: docker/build-push-action@v5
+      with:
+        context: ./app
+        push: false
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
+          ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
+        cache-from: type=gha
+        cache-to:   type=gha,mode=max
+
 
     # Test the container image
     - name: Test container
