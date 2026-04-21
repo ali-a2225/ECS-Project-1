@@ -49,6 +49,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./app
+        load: true
         push: false
         tags: |
           ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
@@ -78,4 +79,3 @@ jobs:
       run: |
         docker push ${{env.REGISTRY}}/${{env.REPOSITORY}}:${{env.IMAGE_TAG}}
         docker push ${{env.REGISTRY}}/${{env.REPOSITORY}}:latest
-        
