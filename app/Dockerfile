@@ -24,8 +24,9 @@ RUN apk add --no-cache upx \
     # && upx --best --lzma --ultra-brute gatus \
     && upx --best gatus \
     && apk del upx \
-    && apk add purge -y --auto-remove upx \
-    && rm -rf /var/lib/apt/lists/*
+    # for debian
+    # && apk add purge -y --auto-remove upx \
+    # && rm -rf /var/lib/apt/lists/*
 
 
 FROM scratch AS runtime
