@@ -23,11 +23,10 @@ RUN CGO_ENABLED=0 GOOS=linux \
 RUN apk add --no-cache upx \
     # && upx --best --lzma --ultra-brute gatus \
     && upx --best gatus \
-    && apk del upx \
+    && apk del upx 
     # for debian
     # && apk add purge -y --auto-remove upx \
     # && rm -rf /var/lib/apt/lists/*
-
 
 FROM scratch AS runtime
 # FROM golang:latest AS runtime
