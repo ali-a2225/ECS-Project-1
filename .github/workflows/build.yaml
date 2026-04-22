@@ -3,8 +3,8 @@ name: Build, Test and Push to ECR
 on:
   push:
     paths:
-      - '/app/**'
-      - '/app/config.yaml'
+      - 'app/**'
+      - 'app/config.yaml'
       - '.github/workflows/**'
 
 
