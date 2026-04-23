@@ -61,6 +61,11 @@ resource "aws_ecs_task_definition" "web_task" {
       },
       # false for nginx
       "readonlyRootFilesystem" : false
+      "linuxParameters" : {
+        "capabilities" : {
+          "add" : ["NET_RAW"]
+        }
+      }
     }
     ]
   )
