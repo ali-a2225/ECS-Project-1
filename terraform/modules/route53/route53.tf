@@ -28,19 +28,32 @@ resource "aws_route53_record" "cert_validation" {
 # Create DNS records in GoDaddy
 
 resource "null_resource" "godaddy_dns" {
+  # trigger if NS changes
+    triggers = {
+    ns_hash = sha1(join(",", data.aws_route53_zone.main.name_servers))
+  }
+
   provisioner "local-exec" {
-    command = <<EOT
-    curl -X PATCH \
-  "https://api.godaddy.com/api/v1/domains/${var.domain_name}" \
-  -H "Authorization: sso-key ${var.GODADDY_API_KEY }:${var.GODADDY_API_SECRET}" \
+  # execute following string as a bash command
+  interpreter = ["/bin/bash", "-c"]
+  # pass to script as env vars to keep out of terraform logs
+  environment = {
+  GODADDY_API_KEY    = var.GODADDY_API_KEY
+  GODADDY_API_SECRET = var.GODADDY_API_SECRET
+  DOMAIN             = var.domain_name
+  NS1                = data.aws_route53_zone.main.name_servers[0]
+  NS2                = data.aws_route53_zone.main.name_servers[1]
+  }
+
+  command = <<EOT
+  set -euo pipefail
+
+  curl -f -X PATCH \
+  "https://api.godaddy.com/api/v1/domains/$${DOMAIN}" \
+  -H "Authorization: sso-key $${GODADDY_API_KEY}:$${GODADDY_API_SECRET}" \
   -H "Content-Type: application/json" \
-  -d '{
-    "nameServers": [
-      "${data.aws_route53_zone.main.name_servers[0]}",
-      "${data.aws_route53_zone.main.name_servers[1]}"
-    ]
-  }'
-    EOT
+  -d "$(jq -n --arg ns1 "$${NS1}" --arg ns2 "$${NS2}" '{nameServers: [$ns1, $ns2]}')"
+  EOT
   }
 }
 

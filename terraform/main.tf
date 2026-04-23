@@ -1,9 +1,9 @@
 module "vpc" {
-    source = "./vpc"
+    source = "./modules/vpc"
 }
 
 module "alb" {
-  source = "./alb"
+  source = "./modules/alb"
 
   public_subnets = module.vpc.public_subnet_ids
   load_balancer_security_group = [module.secgroups.load_balancer_sg_id]
@@ -14,11 +14,11 @@ module "alb" {
 }
 
 module "iam" {
-    source = "./iam"
+    source = "./modules/iam"
 }
 
 module "ecs"{
-    source = "./ecs"
+    source = "./modules/ecs"
     vpc_id = module.vpc.vpc_id
     ECS_Agent_Role_ARN = module.iam.ECS_Agent_Role_ARN
     web_asg_arn = module.resources.web_asg_arn
@@ -37,7 +37,7 @@ module "ecs"{
 }
 
 module "resources" {
-    source = "./resources"
+    source = "./modules/resources"
     vpc_id = module.vpc.vpc_id
     web_sg_id = module.secgroups.web_sg_id
     EC2_Instance_Profile_ARN = module.iam.EC2_Instance_Profile_ARN
@@ -47,20 +47,20 @@ module "resources" {
 }
 
 module "secgroups" {
-    source = "./secgroups"
+    source = "./modules/secgroups"
     vpc_id = module.vpc.vpc_id
     containerPort = var.containerPort
 }
 
 module "acm"{
-    source = "./acm"
+    source = "./modules/acm"
     domain_name = var.domain_name
     route53_record_name = module.route53.route53_record_name
     cert_validation = module.route53.cert_validation
 }
 
 module "route53" {
-    source = "./route53"
+    source = "./modules/route53"
     domain_name = var.domain_name
     alb_zone_id = module.alb.alb_zone_id
     alb_url = module.alb.alb_url
