@@ -72,13 +72,13 @@ endpoints:
     conditions:
       - "[DOMAIN_EXPIRATION] > 720h"
 
-      
-  # - name: example-dns-query
-  #   url: "8.8.8.8"
-  #   interval: 5m
-  #   dns:
-  #     query-name: "google.com"
-  #     query-type: "A"
-  #   conditions:
-  #     # - "[BODY] == pat(*.*.*.*)"  # Matches any IPv4 address
-  #     - "[DNS_RCODE] == NOERROR"
+
+  - name: example-dns-query
+    url: "8.8.8.8"
+    interval: 5m
+    dns:
+      query-name: "google.com"
+      query-type: "A"
+    conditions:
+      # - "[BODY] == pat(*.*.*.*)"  # Matches any IPv4 address
+      - "[DNS_RCODE] == NOERROR"

@@ -15,17 +15,16 @@ RUN CGO_ENABLED=0 GOOS=linux \
     -o gatus .
 
 
-## Compression has 0.8MB reduction on ECR but adds 10-30s on the pipeline
-## adds 14mins to pipeline with cache disabled, -3.44MB reduction on ECR
+## adds 10-30s to pipeline with normal compression has 0.8MB reduction on ECR but 
+## adds 14mins to pipeline with extreme compression and cache disabled (or enabled but something been changed in the layers) -3.44MB reduction on ECR
 ## Install UPX to compress the binary
-RUN apk add --no-cache upx \
-    && upx --best --lzma --ultra-brute gatus \
-    && apk del upx 
+# RUN apk add --no-cache upx \
+#     && upx --best --lzma --ultra-brute gatus \
+#     && apk del upx 
 
 FROM scratch AS runtime
-# FROM golang:latest AS runtime
 
-# USER 1001:1001
+USER 1001:1001
 WORKDIR /app
 
 COPY --from=builder /app/gatus /app/
