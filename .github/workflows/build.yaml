@@ -51,6 +51,8 @@ jobs:
         context: ./app
         load: true
         push: false
+        # disable caching
+        no-cache: true
         tags: |
           ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
           ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
