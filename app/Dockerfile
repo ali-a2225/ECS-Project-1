@@ -20,13 +20,13 @@ RUN CGO_ENABLED=0 GOOS=linux \
 #     && upx --best --lzma --ultra-brute gatus
   
 ## Install UPX to compress the binary
-RUN apk add --no-cache upx \
-    # && upx --best --lzma --ultra-brute gatus \
-    && upx --best gatus \
-    && apk del upx 
-    # for debian
-    # && apk add purge -y --auto-remove upx \
-    # && rm -rf /var/lib/apt/lists/*
+# RUN apk add --no-cache upx \
+#     # && upx --best --lzma --ultra-brute gatus \
+#     && upx --best gatus \
+#     && apk del upx 
+#     # for debian
+#     # && apk add purge -y --auto-remove upx \
+#     # && rm -rf /var/lib/apt/lists/*
 
 FROM scratch AS runtime
 # FROM golang:latest AS runtime
