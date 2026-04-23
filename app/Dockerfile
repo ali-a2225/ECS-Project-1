@@ -1,5 +1,4 @@
 FROM golang:alpine AS builder
-RUN apk --update add ca-certificates libcap
 WORKDIR /app
 
 COPY go.mod go.sum ./
@@ -14,7 +13,8 @@ RUN CGO_ENABLED=0 GOOS=linux \
     -trimpath -ldflags="-s -w" \
     -o gatus .
 
-RUN setcap cap_net_raw+ep /app/gatus
+RUN apk add libcap \
+    && setcap cap_net_raw+ep /app/gatus
 
 ## adds 10-30s to pipeline with normal compression has 0.8MB reduction on ECR but 
 ## adds 14mins to pipeline with extreme compression and cache disabled (or enabled but something been changed in the layers) -3.44MB reduction on ECR
@@ -23,16 +23,8 @@ RUN setcap cap_net_raw+ep /app/gatus
 #     && upx --best --lzma --ultra-brute gatus \
 #     && apk del upx 
 
-FROM scratch AS runtime
-
-# NETRAW added to task definition
-USER 1001:1001 
+FROM gcr.io/distroless/static:nonroot
 WORKDIR /app
-
 COPY --from=builder /app/gatus /app/
 COPY --from=builder /app/config.yaml /app/config/config.yaml
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-
-EXPOSE 8080
 ENTRYPOINT ["./gatus"]
-
