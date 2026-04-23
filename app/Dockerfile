@@ -23,7 +23,7 @@ RUN CGO_ENABLED=0 GOOS=linux \
 #     && apk del upx 
 
 # FROM scratch AS runtime
-FROM distroless/static:nonroot
+FROM gcr.io/distroless/static:nonroot
 # NETRAW added to task definition
 # USER 1001:1001 
 WORKDIR /app
