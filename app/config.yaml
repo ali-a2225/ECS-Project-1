@@ -73,7 +73,7 @@ endpoints:
       - "[DOMAIN_EXPIRATION] > 720h"
 
 
-  - name: example-dns-query
+  - name: dns-query
     url: "8.8.8.8"
     interval: 5m
     dns:
