@@ -22,9 +22,10 @@ RUN CGO_ENABLED=0 GOOS=linux \
 #     && upx --best --lzma --ultra-brute gatus \
 #     && apk del upx 
 
-FROM scratch AS runtime
-
-USER 1001:1001
+# FROM scratch AS runtime
+FROM distroless/static:nonroot
+# NETRAW added to task definition
+# USER 1001:1001 
 WORKDIR /app
 
 COPY --from=builder /app/gatus /app/
