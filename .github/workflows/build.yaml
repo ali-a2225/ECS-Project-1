@@ -45,7 +45,7 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     # Build and Tag Container Image
-    - name: Build container image (cache enabled)
+    - name: Build container image (cache disabled)
       uses: docker/build-push-action@v5
       with:
         context: ./app
@@ -54,8 +54,8 @@ jobs:
         tags: |
           ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}
           ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
-        cache-from: type=gha
-        cache-to:   type=gha,mode=max
+        # cache-from: type=gha
+        # cache-to:   type=gha,mode=max
 
 
     # Test the container image
