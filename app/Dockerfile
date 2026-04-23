@@ -19,7 +19,7 @@ RUN CGO_ENABLED=0 GOOS=linux \
 # RUN apt-get update && apt-get install -y upx \
 #     && upx --best --lzma --ultra-brute gatus
   
-Install UPX to compress the binary
+## Install UPX to compress the binary
 RUN apk add --no-cache upx \
     # && upx --best --lzma --ultra-brute gatus \
     && upx --best gatus \
