@@ -16,15 +16,11 @@ RUN CGO_ENABLED=0 GOOS=linux \
 
 
 ## Compression has 0.8MB reduction on ECR but adds 10-30s on the pipeline
-## add 14mins to pipeline with cache disabled, -3.44MB reduction on ECR
+## adds 14mins to pipeline with cache disabled, -3.44MB reduction on ECR
 ## Install UPX to compress the binary
 RUN apk add --no-cache upx \
     && upx --best --lzma --ultra-brute gatus \
-    # && upx --best gatus \
     && apk del upx 
-    # for debian
-    # && apk add purge -y --auto-remove upx \
-    # && rm -rf /var/lib/apt/lists/*
 
 FROM scratch AS runtime
 # FROM golang:latest AS runtime
