@@ -61,39 +61,18 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 ├── README.md
 ├── app
 │   ├── Dockerfile
-│   └── config
-│       └── config.yaml
-├── acm
-│   ├── acm.tf
-│   └── outputs.tf
-├── alb
-│   ├── main.tf
-│   ├── output.tf
+│   └── config.yaml
+├── terraform
+│   └── acm
+│   └── alb
+│   └── ecs
+│   └── resources
+│   └── route53
+│   └── secgroups
+│   └── vpc
+│   └── main.tf
+│   └── provider.tf
 │   └── variables.tf
-├── ecs
-│   ├── ecs.tf
-│   ├── outputs.tf
-│   └── variables.tf
-├── iam
-│   ├── iam.tf
-│   └── outputs.tf
-├── resources
-│   ├── outputs.tf
-│   ├── resources.tf
-│   └── variables.tf
-├── route53
-│   ├── route53.tf
-│   └── variables.tf
-├── secgroups
-│   ├── outputs.tf
-│   ├── secgroups.tf
-│   └── variables.tf
-└── vpc
-│   ├── outputs.tf
-│   └── vpc.tf
-├── main.tf
-├── provider.tf
-└── variables.tf
 
 ```
 
@@ -107,13 +86,14 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 ## Further Improvements
 
  - [X] state versioning
+- [ ] add github OIDC provider to my bootstrap 
+- [ ] integrate "curl https://tm.<your-domain>/health" health check into my pipeline
+- [ ] store config.yaml in S3 bucket and pass it to the tasks at runtime rather than in the container image to prevent rebuilding and in my case recompressing the image which can make builds longer
 - [ ] create scripts to perform checks for ECS and other resources
 - [ ] create own provider and module to work with GoDaddy
 - [ ] create action to list all resources currently in use on AWS
 - [ ] create script to watch ECS service live as tasks are being created and when being destroyed, it would be useful for troubleshooting.
 - [ ] create VPC endpoints to lower the costs of NAT gateways
-- [ ] consider decreasing the number of AZs
-- [ ] store config.yaml in S3 bucket and pass it to the tasks at runtime rather than in the container image
 - [ ] enable tagging of resources
 - [ ] move all the terraform folder in folder terraform/modules and move bootstrap into terraform/bootstrap
 - [ ] experiment with FinOps. See what other decisions I can make to cut costs
