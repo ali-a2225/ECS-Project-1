@@ -6,6 +6,8 @@ on:
       - 'app/**'
       - 'app/config.yaml'
       - '.github/workflows/**'
+  
+  workflow_dispatch:
 
 
 
