@@ -8,7 +8,8 @@ resource "aws_lb" "app_lb" {
   security_groups    = var.load_balancer_security_group
   drop_invalid_header_fields = true
   #enable_deletion_protection = true
-  depends_on = [var.internet_gateway_id]
+  # depends_on = [var.internet_gateway_id]
+  depends_on = [aws_acm_certificate_validation.cert_validation]
   tags = {
     Name = "app-lb"
   }
@@ -17,7 +18,7 @@ resource "aws_lb" "app_lb" {
 #Create Target Group for Load Balancer
 resource "aws_lb_target_group" "tg-lb-ecs" {
   name     = "tg-lb-ecs"
-  port     = 80
+  port     = var.containerPort
   protocol = "HTTP"
   vpc_id   = var.vpc_id
   target_type = "ip"
