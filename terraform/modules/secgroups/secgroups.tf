@@ -44,7 +44,7 @@ resource "aws_vpc_security_group_egress_rule" "sg_allow_all_outbound" {
 }
 
 
-##Security Group for EC2 instances and ECS Tasks to allow HTTP and HTTPS from Load Balancer only
+##Security Group for EC2 instances and ECS Tasks to allow from Load Balancer only on container port
 
 ###EC2 instances Security Group
 resource "aws_security_group" "web_sg" {
