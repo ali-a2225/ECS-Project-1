@@ -1,3 +1,0 @@
-[submodule "app/gatus"]
-	path = app/gatus
-	url = https://github.com/TwiN/gatus.git
