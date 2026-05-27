@@ -25,6 +25,11 @@ jobs:
         role-to-assume:  ${{ secrets.AWS_OIDC_ROLE }}
         aws-region: eu-west-2
 
+    - name: terraform init
+      uses: dflook/terraform-new-workspace@v2
+      with:
+        path: terraform
+
     - name: terraform validate
       uses: dflook/terraform-validate@v2
       id: validate
