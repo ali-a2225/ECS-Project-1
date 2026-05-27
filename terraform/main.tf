@@ -37,7 +37,7 @@ module "ecs"{
 }
 
 module "compute" {
-    source = "./module/compute"
+    source = "./modules/compute"
     vpc_id = module.vpc.vpc_id
     web_sg_id = module.secgroups.web_sg_id
     EC2_Instance_Profile_ARN = module.iam.EC2_Instance_Profile_ARN
