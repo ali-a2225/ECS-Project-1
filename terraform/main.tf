@@ -21,7 +21,7 @@ module "ecs"{
     source = "./modules/ecs"
     vpc_id = module.vpc.vpc_id
     ECS_Agent_Role_ARN = module.iam.ECS_Agent_Role_ARN
-    web_asg_arn = module.resources.web_asg_arn
+    web_asg_arn = module.compute.web_asg_arn
     private_subnets = module.vpc.private_subnet_ids
     target_group_arn = module.alb.target_group_arn
     web_sg_id = module.secgroups.web_sg_id
@@ -36,8 +36,8 @@ module "ecs"{
 
 }
 
-module "resources" {
-    source = "./modules/resources"
+module "compute" {
+    source = "./module/compute"
     vpc_id = module.vpc.vpc_id
     web_sg_id = module.secgroups.web_sg_id
     EC2_Instance_Profile_ARN = module.iam.EC2_Instance_Profile_ARN
