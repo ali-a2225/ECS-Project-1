@@ -53,7 +53,7 @@ resource "aws_iam_role" "ECS_Agent_Role" {
 }
 
 ## Define the trust relationship for the role
-resource aws_iam_role_policy_attachment "ECS_Agent_Role_Policy" {
+resource "aws_iam_role_policy_attachment" "ECS_Agent_Role_Policy" {
   role       = aws_iam_role.ECS_Agent_Role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }

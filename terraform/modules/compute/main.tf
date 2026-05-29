@@ -5,8 +5,8 @@ data "aws_ssm_parameter" "ecs_node_ami" {
 #Launch Template for EC2 instances 
 resource "aws_launch_template" "EC2_Launch_Template" {
 
-  name = "EC2_Resources_ECS_Cluster"
-  image_id  = data.aws_ssm_parameter.ecs_node_ami.value
+  name          = "EC2_Resources_ECS_Cluster"
+  image_id      = data.aws_ssm_parameter.ecs_node_ami.value
   instance_type = "t2.micro"
   iam_instance_profile {
     arn = var.EC2_Instance_Profile_ARN
@@ -34,19 +34,19 @@ resource "aws_launch_template" "EC2_Launch_Template" {
     EOF
   )
 
-} 
+}
 
 #Auto Scaling Group
 resource "aws_autoscaling_group" "web_asg" {
-  desired_capacity     = 1
-  max_size             = 1
-  min_size             = 1
-  vpc_zone_identifier  = var.private_subnets
+  desired_capacity    = 1
+  max_size            = 1
+  min_size            = 1
+  vpc_zone_identifier = var.private_subnets
   launch_template {
     id      = aws_launch_template.EC2_Launch_Template.id
     version = "$Latest"
   }
-  health_check_type   = "EC2"
+  health_check_type         = "EC2"
   health_check_grace_period = 300
   lifecycle {
     create_before_destroy = true
@@ -60,5 +60,5 @@ resource "aws_autoscaling_group" "web_asg" {
   }
   # stop erroirring when scaling activies fail due to capacity issues, we want to ignore those failures and not let it affect our deployment
   ignore_failed_scaling_activities = true
-  depends_on = [var.EC2_Instance_Profile_ARN]
+  depends_on                       = [var.EC2_Instance_Profile_ARN]
 }

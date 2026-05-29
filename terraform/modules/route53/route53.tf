@@ -1,5 +1,5 @@
 data "aws_route53_zone" "main" {
-  name         = var.domain_name
+  name = var.domain_name
 }
 
 # Validation records
@@ -12,7 +12,7 @@ resource "aws_route53_record" "cert_validation" {
       type   = dvo.resource_record_type
     }
   }
-  
+
   #create the record in Route53 to validate the ACM certificate
   name    = each.value.name
   records = [each.value.record]
@@ -29,23 +29,23 @@ resource "aws_route53_record" "cert_validation" {
 
 resource "null_resource" "godaddy_dns" {
   # trigger if NS changes
-    triggers = {
+  triggers = {
     ns_hash = sha1(join(",", data.aws_route53_zone.main.name_servers))
   }
 
   provisioner "local-exec" {
-  # execute following string as a bash command
-  interpreter = ["/bin/bash", "-c"]
-  # pass to script as env vars to keep out of terraform logs
-  environment = {
-  GODADDY_API_KEY    = var.GODADDY_API_KEY
-  GODADDY_API_SECRET = var.GODADDY_API_SECRET
-  DOMAIN             = var.domain_name
-  NS1                = data.aws_route53_zone.main.name_servers[0]
-  NS2                = data.aws_route53_zone.main.name_servers[1]
-  }
+    # execute following string as a bash command
+    interpreter = ["/bin/bash", "-c"]
+    # pass to script as env vars to keep out of terraform logs
+    environment = {
+      GODADDY_API_KEY    = var.GODADDY_API_KEY
+      GODADDY_API_SECRET = var.GODADDY_API_SECRET
+      DOMAIN             = var.domain_name
+      NS1                = data.aws_route53_zone.main.name_servers[0]
+      NS2                = data.aws_route53_zone.main.name_servers[1]
+    }
 
-  command = <<EOT
+    command = <<EOT
   set -euo pipefail
 
   curl -f -X PATCH \

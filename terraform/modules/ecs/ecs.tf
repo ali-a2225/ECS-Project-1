@@ -37,11 +37,11 @@ resource "aws_ecs_task_definition" "web_task" {
 
   container_definitions = jsonencode([
     {
-      name      = "first"
-      image     = "${data.aws_ecr_repository.web_ecr_repo.repository_url}:latest"
-      cpu       = 256
-      memory    = 512
-      essential = true
+      name        = "first"
+      image       = "${data.aws_ecr_repository.web_ecr_repo.repository_url}:latest"
+      cpu         = 256
+      memory      = 512
+      essential   = true
       stopTimeout = 5
       portMappings = [
         {
@@ -100,8 +100,8 @@ resource "aws_ecs_service" "gatus_service" {
     capacity_provider = aws_ecs_capacity_provider.asg_capacity_provider.name
     weight            = 1
   }
-  force_delete = true
-  force_new_deployment = true
+  force_delete                       = true
+  force_new_deployment               = true
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
   #ECS will register and deregister tasks with this target group
@@ -138,7 +138,7 @@ resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
   name = "asg-capacity-provider"
   auto_scaling_group_provider {
     # disable graceful draining
-    managed_draining = "ENABLED"
+    managed_draining       = "ENABLED"
     auto_scaling_group_arn = var.web_asg_arn
     managed_scaling {
       status                    = "ENABLED"
@@ -163,7 +163,7 @@ resource "aws_ecs_cluster_capacity_providers" "main" {
 
 #Cloudwatch log qroup for ECS tasks
 resource "aws_cloudwatch_log_group" "ecs" {
-  name = "/ecs/demo"
+  name              = "/ecs/demo"
   retention_in_days = 365
 
 }

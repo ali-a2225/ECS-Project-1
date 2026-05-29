@@ -11,35 +11,35 @@ resource "aws_security_group" "lb_sg" {
 }
 
 ###Allow in HTTP from anywhere
-resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_everywhere"{
+resource "aws_vpc_security_group_ingress_rule" "sg_allow_http_from_everywhere" {
   security_group_id = aws_security_group.lb_sg.id
 
 
-  cidr_ipv4 = "0.0.0.0/0"
+  cidr_ipv4   = "0.0.0.0/0"
   from_port   = 80
   to_port     = 80
-  ip_protocol    = "tcp"
+  ip_protocol = "tcp"
   description = "Allow HTTP from anywhere"
 }
 ###Allow in HTTPS from anywhere
-resource "aws_vpc_security_group_ingress_rule" "sg_allow_https_from_everywhere"{
+resource "aws_vpc_security_group_ingress_rule" "sg_allow_https_from_everywhere" {
   security_group_id = aws_security_group.lb_sg.id
 
 
-  cidr_ipv4 = "0.0.0.0/0"
+  cidr_ipv4   = "0.0.0.0/0"
   from_port   = 443
   to_port     = 443
-  ip_protocol    = "tcp"
+  ip_protocol = "tcp"
   description = "Allow HTTPS from anywhere"
-  
+
 }
 
 ###Allow outbound traffic
 resource "aws_vpc_security_group_egress_rule" "sg_allow_all_outbound" {
   security_group_id = aws_security_group.lb_sg.id
 
-  cidr_ipv4 = "0.0.0.0/0"
-  ip_protocol    = "-1"
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
   description = "Allow all outbound traffic from Load Balancer"
 }
 
@@ -55,20 +55,20 @@ resource "aws_security_group" "web_sg" {
 }
 
 ###Allow in port 8080
-resource "aws_vpc_security_group_ingress_rule" "allow_8080_from_lb"{
-  security_group_id = aws_security_group.web_sg.id
+resource "aws_vpc_security_group_ingress_rule" "allow_8080_from_lb" {
+  security_group_id            = aws_security_group.web_sg.id
   referenced_security_group_id = aws_security_group.lb_sg.id
-  from_port   = var.containerPort
-  to_port     = var.containerPort
-  ip_protocol    = "tcp"
-  description = "Allow 8080 traffic from Load Balancer"
+  from_port                    = var.containerPort
+  to_port                      = var.containerPort
+  ip_protocol                  = "tcp"
+  description                  = "Allow 8080 traffic from Load Balancer"
 
 }
 
 ###Allow outbound traffic from EC2 instances
 resource "aws_vpc_security_group_egress_rule" "sg_allow_HTTPS_outbound_web" {
-  security_group_id = aws_security_group.web_sg.id  
-  cidr_ipv4 = "0.0.0.0/0"
-  ip_protocol = "-1"
-  description = "Allow all outbound traffic from EC2 instances"
+  security_group_id = aws_security_group.web_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+  description       = "Allow all outbound traffic from EC2 instances"
 }
