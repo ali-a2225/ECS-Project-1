@@ -1,5 +1,9 @@
 # VPC with Public and Private Subnets, NAT Gateway, Internet Gateway and Route Tables
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 # Create VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
@@ -44,12 +48,11 @@ resource "aws_nat_gateway" "NAT" {
 resource "aws_subnet" "public" {
   count             = 3
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.${count.index + 1}.0/24"
-  region            = "eu-west-2"
-  availability_zone = "eu-west-2${element(["a", "b", "c"], count.index)}"
+  cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index + 1)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "public_subnet_euwest-2${element(["a", "b", "c"], count.index)}"
+    Name = "public_subnet_${data.aws_availability_zones.available.names[count.index]}"
   }
 }
 
@@ -79,12 +82,11 @@ resource "aws_route_table_association" "public" {
 resource "aws_subnet" "private" {
   count             = 3
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1${count.index + 1}.0/24"
-  region            = "eu-west-2"
-  availability_zone = "eu-west-2${element(["a", "b", "c"], count.index)}"
+  cidr_block        = cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index + 11)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "private_subnet_euwest-2${element(["a", "b", "c"], count.index)}"
+    Name = "public_subnet_${data.aws_availability_zones.available.names[count.index]}"
   }
 }
 
@@ -97,7 +99,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.NAT[count.index].id
   }
   tags = {
-    Name = "private-route-table-${element(["a", "b", "c"], count.index)}"
+    Name = "private-route-table-${data.aws_availability_zones.available.names[count.index]}"
   }
 }
 
