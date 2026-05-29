@@ -14,12 +14,12 @@ resource "aws_route53_record" "cert_validation" {
   }
 
   #create the record in Route53 to validate the ACM certificate
-  name    = each.value.name
-  records = [each.value.record]
-  type    = each.value.type
-  ttl     = 60
-  zone_id = data.aws_route53_zone.main.zone_id
-  allow_overwrite = true  #  prevents conflicts when the main domain and wildcard domain share a validation record.
+  name            = each.value.name
+  records         = [each.value.record]
+  type            = each.value.type
+  ttl             = 60
+  zone_id         = data.aws_route53_zone.main.zone_id
+  allow_overwrite = true #  prevents conflicts when the main domain and wildcard domain share a validation record.
 
   lifecycle {
     create_before_destroy = true
