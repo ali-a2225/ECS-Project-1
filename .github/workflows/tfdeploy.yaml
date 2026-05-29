@@ -33,8 +33,9 @@ jobs:
 
     # if formatting fails force developer to fix it before merging
     - name: Check Terraform fmt
-      run: terraform fmt -check -recursive
-      working-directory: terraform
+      uses: dflook/terraform-fmt-check@v2
+      with:
+        path: terraform
 
     - name: terraform validate
       uses: dflook/terraform-validate@v2
