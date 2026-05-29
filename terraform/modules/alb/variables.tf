@@ -9,3 +9,6 @@ variable "containerPort" {
   type        = number
   default     = 8080
 }
+variable "cert_validation"{
+  description = "Certificate validation status from ACM module"
+}

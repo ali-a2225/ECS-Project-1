@@ -9,7 +9,7 @@ resource "aws_lb" "app_lb" {
   drop_invalid_header_fields = true
   #enable_deletion_protection = true
   # depends_on = [var.internet_gateway_id]
-  depends_on = [aws_acm_certificate_validation.cert_validation]
+  depends_on = [var.cert_validation]
   tags = {
     Name = "app-lb"
   }
