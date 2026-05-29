@@ -2,29 +2,6 @@ data "aws_route53_zone" "main" {
   name = var.domain_name
 }
 
-# Validation records
-## detects what ACM needs and automatically creates the records needed by ACM certificate
-resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in var.domain_validation_options : dvo.record_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  #create the record in Route53 to validate the ACM certificate
-  name            = each.value.name
-  records         = [each.value.record]
-  type            = each.value.type
-  ttl             = 60
-  zone_id         = data.aws_route53_zone.main.zone_id
-  allow_overwrite = true #  prevents conflicts when the main domain and wildcard domain share a validation record.
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
 
 # Create DNS records in GoDaddy
 
