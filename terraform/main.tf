@@ -10,6 +10,7 @@ module "alb" {
   vpc_id = module.vpc.vpc_id
   internet_gateway_id = module.vpc.internet_gateway_id
   cert_arn = module.acm.cert_arn
+  cert_validation = module.acm.cert_validation
 
 }
 
