@@ -57,7 +57,6 @@ module "acm" {
   source              = "./modules/acm"
   domain_name         = var.domain_name
   route53_record_name = module.route53.route53_record_name
-  cert_validation     = module.route53.cert_validation
 }
 
 module "route53" {
