@@ -6,7 +6,7 @@ data "aws_route53_zone" "main" {
 ## detects what ACM needs and automatically creates the records needed by ACM certificate
 resource "aws_route53_record" "cert_validation" {
   for_each = {
-    for dvo in var.domain_validation_options : dvo.domain_name => {
+    for dvo in var.domain_validation_options : dvo.record_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -19,6 +19,7 @@ resource "aws_route53_record" "cert_validation" {
   type    = each.value.type
   ttl     = 60
   zone_id = data.aws_route53_zone.main.zone_id
+  allow_overwrite = true  #  prevents conflicts when the main domain and wildcard domain share a validation record.
 
   lifecycle {
     create_before_destroy = true

@@ -5,13 +5,9 @@
 
 resource "aws_acm_certificate" "cert" {
   domain_name = var.domain_name
+  subject_alternative_names = ["*.${var.domain_name}"]  # <-- for subdomains
   # prove I own the domain by creating a DNS record in Route53
   validation_method = "DNS"
-
-  # subject_alternative_names = [
-  #   "*.${var.domain_name}"
-  # ]
-
   lifecycle {
     create_before_destroy = true
   }
