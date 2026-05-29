@@ -39,9 +39,9 @@ jobs:
     # Destroy Terraform resources
     - name: terraform destroy
       uses: dflook/terraform-apply@v2
+      continue-on-error: false
       with:
         path: terraform
         # workspace: main
         plan_path: ${{ steps.plan.outputs.plan_path}}
-        continue-on-error: false
         auto_approve: true
