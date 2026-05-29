@@ -5,7 +5,7 @@ on:
     paths:
       - 'app/**'
       - 'app/config.yaml'
-      - '.github/workflows/**'
+      - '.github/workflows/build.yaml'
   
   workflow_dispatch:
 
