@@ -6,13 +6,13 @@ data "aws_route53_zone" "main" {
 # Create DNS records in GoDaddy
 
 resource "null_resource" "godaddy_dns" {
+  count = var.skip_dns ? 0 : 1
   # trigger if NS changes
   triggers = {
     ns_hash = sha1(join(",", data.aws_route53_zone.main.name_servers))
   }
 
   provisioner "local-exec" {
-    count = var.skip_dns ? 0 : 1
     # execute following string as a bash command
     interpreter = ["/bin/bash", "-c"]
     # pass to script as env vars to keep out of terraform logs
