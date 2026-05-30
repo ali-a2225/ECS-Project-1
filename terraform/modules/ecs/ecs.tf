@@ -139,6 +139,7 @@ resource "aws_ecs_capacity_provider" "asg_capacity_provider" {
   auto_scaling_group_provider {
     # disable graceful draining
     managed_draining       = "ENABLED"
+    # allow ECS to protect instances it needs by turning protection on, and turns it off when an EC2 instance is drained
     managed_termination_protection = "ENABLED"
     auto_scaling_group_arn = var.web_asg_arn
     managed_scaling {
