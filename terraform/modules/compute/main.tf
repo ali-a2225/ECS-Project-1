@@ -40,10 +40,10 @@ resource "aws_launch_template" "EC2_Launch_Template" {
 resource "aws_autoscaling_group" "web_asg" {
   # stop ASG from terminating instances during scale in, we want to protect our instances from being terminated during scale in, handover to ECS
   protect_from_scale_in = true
-  desired_capacity    = 1
-  max_size            = 1
-  min_size            = 1
-  vpc_zone_identifier = var.private_subnets
+  desired_capacity      = 1
+  max_size              = 1
+  min_size              = 1
+  vpc_zone_identifier   = var.private_subnets
   launch_template {
     id      = aws_launch_template.EC2_Launch_Template.id
     version = "$Latest"
