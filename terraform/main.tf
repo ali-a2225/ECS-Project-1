@@ -68,4 +68,5 @@ module "route53" {
   domain_validation_options = module.acm.domain_validation_options
   GODADDY_API_KEY           = var.GODADDY_API_KEY
   GODADDY_API_SECRET        = var.GODADDY_API_SECRET
+  skip_dns                  = var.skip_dns
 }

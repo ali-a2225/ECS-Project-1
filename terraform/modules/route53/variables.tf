@@ -20,3 +20,7 @@ variable "GODADDY_API_SECRET" {
   type        = string
   sensitive   = true
 }
+variable "skip_dns" {
+  type    = bool
+  default = false
+}

@@ -12,6 +12,7 @@ resource "null_resource" "godaddy_dns" {
   }
 
   provisioner "local-exec" {
+    count = var.skip_dns ? 0 : 1
     # execute following string as a bash command
     interpreter = ["/bin/bash", "-c"]
     # pass to script as env vars to keep out of terraform logs
