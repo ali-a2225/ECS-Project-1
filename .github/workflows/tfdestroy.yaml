@@ -27,21 +27,36 @@ jobs:
         role-to-assume:  ${{  secrets.AWS_OIDC_ROLE }}
         aws-region: eu-west-2
 
-    # plan before destroy
-    - name: terraform plan -destroy
-      uses: dflook/terraform-plan@v2
-      id: plan
-      with:
-       path: terraform
-      # workspace: main
-       destroy: true
+    - name: Verify AWS CLI is available
+      run: aws --version
 
-    # Destroy Terraform resources
-    - name: terraform destroy
-      uses: dflook/terraform-apply@v2
-      continue-on-error: false
-      with:
-        path: terraform
-        # workspace: main
-        plan_path: ${{ steps.plan.outputs.plan_path}}
-        auto_approve: true
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: terraform
+
+    - name: Terraform Destroy
+      run: terraform destroy -auto-approve
+      working-directory: terraform
+
+#  Need AWS cli to run provsioner in ECS service
+    # # plan before destroy
+    # - name: terraform plan -destroy
+    #   uses: dflook/terraform-plan@v2
+    #   id: plan
+    #   with:
+    #    path: terraform
+    #   # workspace: main
+    #    destroy: true
+
+    # # Destroy Terraform resources
+    # - name: terraform destroy
+    #   uses: dflook/terraform-apply@v2
+    #   continue-on-error: false
+    #   with:
+    #     path: terraform
+    #     # workspace: main
+    #     plan_path: ${{ steps.plan.outputs.plan_path}}
+    #     auto_approve: true

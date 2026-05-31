@@ -122,13 +122,26 @@ resource "aws_ecs_service" "gatus_service" {
   }
   #v3
   provisioner "local-exec" {
+    # when = destroy
+    # ## Obtains region dynamically then scales tasks to zero before destroying
+    # command = <<EOF
+    # echo "Update service desired count to 0 before destroy."
+    # REGION=${split(":", self.cluster)[3]}
+    # aws ecs update-service --region $REGION --cluster ${self.cluster} --service ${self.name} --desired-count 0 --force-new-deployment
+    # echo "Update service command executed successfully."
+    # EOF
     when = destroy
-    ## Obtains region dynamically then scales tasks to zero before destroying
+    ## Scale tasks to zero before destroying. Fail loudly if the CLI is missing
     command = <<EOF
-    echo "Update service desired count to 0 before destroy."
+    set -e
+    if ! command -v aws >/dev/null 2>&1; then
+      echo "ERROR: aws CLI not found - cannot scale service to zero before destroy." >&2
+      exit 1
+    fi
     REGION=${split(":", self.cluster)[3]}
+    echo "Scaling ${self.name} to desired-count 0 before destroy..."
     aws ecs update-service --region $REGION --cluster ${self.cluster} --service ${self.name} --desired-count 0 --force-new-deployment
-    echo "Update service command executed successfully."
+    echo "Scale-to-zero command completed."
     EOF
   }
 }
