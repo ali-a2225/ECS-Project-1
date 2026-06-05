@@ -46,7 +46,7 @@ resource "aws_nat_gateway" "NAT" {
 ## Public Subnet
 ### Create Public subnets - eu-west-2a,2b,2c
 resource "aws_subnet" "public" {
-  count             = 3
+  count             = var.public_subnets
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index + 1)
   availability_zone = data.aws_availability_zones.available.names[count.index]
