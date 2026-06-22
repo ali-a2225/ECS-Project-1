@@ -13,7 +13,13 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 
 ![images](https://github.com/ali-a2225/ECS-Project-1/blob/d125e490ec0f8c8e57a5a697869e7ea713423572/images/infra-diagram%20Gatus.jpg)
 
-## VPC 
+## Highlights
+1. Zero-downtime ACM certificates — `create_before_destroy` on the certificate and its DNS validation records means a new cert is issued before the old one is removed.
+2. Scale-to-zero on teardown — the ECS service uses a destroy-time local-exec provisioner that sets the desired task count to 0 and forces a new deployment before the service is destroyed, so capacity-provider managed termination protection doesn't block the destroy.
+3. Automated nameserver delegation — a null_resource patches the domain's nameservers at the registrar (GoDaddy) to point at the Route53 hosted zone via the GoDaddy API, toggleable with skip_dns.
+
+
+## Architecture
 
 **Networking**
 - region: `eu-west-2`
@@ -42,51 +48,106 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 - works with ASG
 
 **Security Groups**
-- allow inbound HTTPS (`443`) from `0.0.0.0/0` to the ALB
-- allow traffic from ALB to ECS tasks only
+- allow inbound HTTPS (port `443`) from `0.0.0.0/0` to the ALB
+- allow inbound HTTP (port `80`) from `0.0.0.0/0` to the ALB
+- allow ONLY traffic from ALB to ECS tasks using SG chaining
 
 **Route53:**
-- a record (alias) pointing to the ALB DNS name
+- A record (alias) pointing to the ALB DNS name
+- A record (alias) for the tm. subdomain pointing to the same ALB
 
 **IAM**
-- Task Role provides permissions required by ECS tasks
+- ECS task execution role lets the agent pull images from ECR and write logs to CloudWatch
 - EC2 Role allows ECS instances to join the ECS cluster and pull images from Amazon ECR
 
 **CloudWatch**
 - collects logs from the ECS cluster for observability and debugging.
 
+## Prerequisites
+The list below is for running Terraform locally. If you deploy through the GitHub Actions workflows instead, the runners install Terraform, tflint, Docker, and the AWS CLI for you.
+
+- Terraform >= 1.5.0 (the pipeline pins 1.15.5)
+- An AWS account. Locally, credentials via aws configure; in CI, access is via an OIDC role (no static keys)
+- AWS CLI required by the ECS scale-to-zero destroy provisioner, the destroy will fail without it
+- jq, curl, and bash used by the GoDaddy nameserver automation
+- Docker to build the Gatus image
+- registered domain whose nameservers you can change
+
 ## **Tree**
 ```
 .
 ├── README.md
-├── app
-│   ├── Dockerfile
-│   └── config.yaml
-├── terraform
-│   └── acm
-│   └── alb
-│   └── ecs
-│   └── resources
-│   └── route53
-│   └── secgroups
-│   └── vpc
-│   └── main.tf
-│   └── provider.tf
-│   └── variables.tf
+├── .github/
+│   └── workflows/
+│       ├── build.yaml          # build & push Docker image to ECR
+│       ├── tfdeploy.yaml       # terraform apply
+│       └── tfdestroy.yaml      # terraform destroy
+├── app/                        # Gatus app (Dockerfile + config.yaml)
+└── terraform/
+    ├── main.tf                
+    ├── provider.tf       
+    ├── variables.tf
+    ├── terraform.tfvars
+    ├── .tflint.hcl
+    ├── bootstrap/              # state bucket, ECR repo, hosted zone
+    │   ├── main.tf
+    │   ├── backend.tf          # local backend
+    │   ├── variables.tf
+    │   ├── outputs.tf
+    │   └── terraform.tfvars
+    └── modules/
+        ├── acm/                # ACM certificate + DNS validation
+        ├── alb/                # load balancer, target group, listeners
+        ├── compute/            # launch template + Auto Scaling Group
+        ├── ecs/                # cluster, task definition, service, capacity provider
+        ├── iam/                # EC2 + ECS roles
+        ├── route53/            # DNS records + GoDaddy nameserver automation
+        ├── secgroups/          # ALB and ECS security groups
+        └── vpc/                # VPC, subnets, NAT/IGW, routes
+
 
 ```
 
 ## Getting Started
 1. Clone the repo  
-2. Configure AWS credentials  
-3. Run `terraform init && terraform apply`  
-4. Deploy the application via GitHub Actions  
+2. Configure AWS credentials
+3. Run `cd terraform/bootstrap && terraform init && terraform apply`
+4. Delegate nameservers for your domain registrar to Route53
+ a) manually
+ b) obtain GoDaddy API keys and save them as secrets  and supplying GODADDY_API_KEY / GODADDY_API_SECRET. and set skip_dns to false to ensure the nameservers in GoDaddy are programmatically overwritten with those in Route53 
+5. Manually setup OIDC trust relationship between AWS and GitHub
+6. Build the Gatus image from app/ and push it to the ECR repo from step 1 locally or via the build workflow
+7. Run `cd terraform && terraform init && terraform apply` # will use backend from bootstrap 
+ 
+Once applied, the app is reachable at https://<your-domain>.
 
+
+## CI/CD 
+
+All three workflows authenticate to AWS via OIDC (no static access keys).
+
+- build.yaml — on changes under app/** (or manual dispatch): builds the image, runs it and curls /health as a test, then pushes to ECR tagged with the commit SHA and latest.
+- tfdeploy.yaml — on changes under terraform/**: a checks job runs fmt -check, validate, tflint, and plan; an apply job runs only if checks passes and the branch is main.
+- tfdestroy.yaml — manual dispatch only; requires typing DESTROY TF to confirm, then runs terraform destroy.
+
+Required repository secrets: 
+- AWS_OIDC_ROLE (the role assumed via OIDC)
+- GODADDY_API_KEY / GODADDY_API_SECRET only if skip_dns = false
+
+
+
+## Teardown
+- Run `cd terraform && terraform destroy` OR Run tfdestroy workflow
+
+The tfdestroy workflow runs Terraform directly on the runner (not through the dflook container) on purpose: the scale-to-zero provisioner shells out to the AWS CLI, which the runner has but the action container does not.
+
+Note S3 bucket and ECR repository from the bootstrap module will survive.
 
 ## Further Improvements
 
  - [X] state versioning
-- [ ] add github OIDC provider to my bootstrap 
+ - [X] move all the terraform folder in folder terraform/modules and move bootstrap into terraform/bootstrap
+- [ ] codify the GitHub OIDC provider and IAM role in the bootstrap (I did this manually)
 - [ ] integrate "curl https://tm.<your-domain>/health" health check into my pipeline
 - [ ] store config.yaml in S3 bucket and pass it to the tasks at runtime rather than in the container image to prevent rebuilding and in my case recompressing the image which can make builds longer
 - [ ] create scripts to perform checks for ECS and other resources
@@ -95,5 +156,4 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 - [ ] create script to watch ECS service live as tasks are being created and when being destroyed, it would be useful for troubleshooting.
 - [ ] create VPC endpoints to lower the costs of NAT gateways
 - [ ] enable tagging of resources
-- [ ] move all the terraform folder in folder terraform/modules and move bootstrap into terraform/bootstrap
 - [ ] experiment with FinOps. See what other decisions I can make to cut costs
