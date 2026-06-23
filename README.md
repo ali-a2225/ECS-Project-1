@@ -17,7 +17,7 @@ This repo contains Terraform code to deploy a scalable, highly available archite
 1. Zero-downtime ACM certificates — `create_before_destroy` on the certificate and its DNS validation records means a new cert is issued before the old one is removed.
 2. Scale-to-zero on teardown — the ECS service uses a destroy-time local-exec provisioner that sets the desired task count to 0 and forces a new deployment before the service is destroyed, so capacity-provider managed termination protection doesn't block the destroy.
 3. Automated nameserver delegation — a null_resource patches the domain's nameservers at the registrar (GoDaddy) to point at the Route53 hosted zone via the GoDaddy API, toggleable with skip_dns.
-
+4. EC2 capacity provider — an Auto Scaling Goup backed capacity provider manages the cluster's EC2 capacity, with managed scaling sizing the ASG to task demand and managed termination protection keeping instances that still run tasks from being scaled in.
 
 ## Architecture
 
